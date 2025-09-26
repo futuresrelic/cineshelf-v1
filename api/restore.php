@@ -29,7 +29,7 @@ if (!$user) {
     exit;
 }
 
-// Function to find backup files for a user (relative to api folder)
+// Function to find backup files for a user (relative to api folder) - loads from data folder
 function findBackupFiles($user) {
     $files = [];
     if (file_exists('../data')) {

@@ -30,7 +30,7 @@ if (empty($user)) {
     exit;
 }
 
-// ALWAYS use this clean filename format (relative to api folder)
+// ALWAYS use this clean filename format (relative to api folder) - saves to data folder
 $filename = "../data/cineshelf_backup_{$user}.json";
 
 // Create data directory if it doesn't exist
@@ -47,6 +47,7 @@ $input['backupLabel'] = "Backup for {$user}";
 $input['backupTime'] = date('Y-m-d H:i:s');
 $input['serverVersion'] = '2.1-api';
 $input['filename_created'] = basename($filename);
+$input['endpoint_used'] = 'api';
 
 // Write the backup file
 if (file_put_contents($filename, json_encode($input, JSON_PRETTY_PRINT))) {
@@ -56,7 +57,8 @@ if (file_put_contents($filename, json_encode($input, JSON_PRETTY_PRINT))) {
         'message' => 'Backup saved successfully (API endpoint)',
         'filename' => basename($filename),
         'user' => $user,
-        'timestamp' => date('c')
+        'timestamp' => date('c'),
+        'endpoint' => 'api'
     ]);
 } else {
     error_log("CineShelf API Backup: FAILED - Could not write to {$filename}");

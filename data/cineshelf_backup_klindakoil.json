@@ -2358,7 +2358,7 @@
         },
         {
             "id": "1756998152946165",
-            "title": "Ghostbusters,,,,,,,,,,,,,,\r",
+            "title": "Ghostbusters",
             "format": "",
             "region": "",
             "discs": 1,
@@ -2367,8 +2367,8 @@
             "upc": "",
             "notes": "",
             "isWishlist": false,
-            "movieId": null,
-            "resolved": false,
+            "movieId": "620",
+            "resolved": true,
             "created": "2025-09-04T15:02:32.946Z"
         },
         {
@@ -9977,18 +9977,31 @@
             "genre": "Animation, Comedy",
             "runtime": "81 min",
             "rated": "Unknown"
+        },
+        {
+            "imdbID": "620",
+            "title": "Ghostbusters",
+            "year": 1984,
+            "posterIMG": "https:\/\/image.tmdb.org\/t\/p\/w500\/7E8nLijS9AwwUEPu2oFYOVKhdFA.jpg",
+            "imdbRating": 7.494,
+            "plot": "After losing their academic posts at a prestigious university, a team of parapsychologists goes into business as proton-pack-toting \"ghostbusters\" who exterminate ghouls, hobgoblins and supernatural pests of all stripes. An ad campaign pays off when a knockout cellist hires the squad to purge her swanky digs of demons that appear to be living in her refrigerator.",
+            "director": "Ivan Reitman",
+            "genre": "Comedy, Fantasy",
+            "runtime": "107 min",
+            "rated": "Unknown"
         }
     ],
     "customEditions": [],
-    "timestamp": "2025-09-21T16:20:14.962Z",
-    "userAgent": "Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Mobile Safari\/537.36",
+    "timestamp": "2025-09-26T15:53:25.904Z",
+    "userAgent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36",
     "deviceInfo": {
-        "platform": "Linux armv81",
-        "language": "en-CA",
+        "platform": "Win32",
+        "language": "en-US",
         "cookieEnabled": true
     },
     "backupLabel": "Backup for klindakoil",
-    "backupTime": "2025-09-21 09:20:16",
+    "backupTime": "2025-09-26 08:53:27",
     "serverVersion": "2.1",
-    "filename_created": "cineshelf_backup_klindakoil.json"
+    "filename_created": "cineshelf_backup_klindakoil.json",
+    "endpoint_used": "root"
 }

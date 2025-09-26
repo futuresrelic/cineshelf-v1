@@ -30,7 +30,7 @@ if (empty($user)) {
     exit;
 }
 
-// ALWAYS use this clean filename format
+// ALWAYS use this clean filename format - saves to data folder
 $filename = "data/cineshelf_backup_{$user}.json";
 
 // Create data directory if it doesn't exist
@@ -47,6 +47,7 @@ $input['backupLabel'] = "Backup for {$user}";
 $input['backupTime'] = date('Y-m-d H:i:s');
 $input['serverVersion'] = '2.1';
 $input['filename_created'] = basename($filename);
+$input['endpoint_used'] = 'root';
 
 // Write the backup file
 if (file_put_contents($filename, json_encode($input, JSON_PRETTY_PRINT))) {
@@ -56,7 +57,8 @@ if (file_put_contents($filename, json_encode($input, JSON_PRETTY_PRINT))) {
         'message' => 'Backup saved successfully',
         'filename' => basename($filename),
         'user' => $user,
-        'timestamp' => date('c')
+        'timestamp' => date('c'),
+        'endpoint' => 'root'
     ]);
 } else {
     error_log("CineShelf Backup: FAILED - Could not write to {$filename}");

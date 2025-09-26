@@ -29,7 +29,7 @@ if (!$user) {
     exit;
 }
 
-// Function to find backup files for a user
+// Function to find backup files for a user - loads from data folder
 function findBackupFiles($user) {
     $files = [];
     if (file_exists('data')) {
@@ -114,7 +114,8 @@ $jsonData['_restore_metadata'] = [
     'filename_used' => basename($filename),
     'restored_at' => date('c'),
     'user_requested' => $user,
-    'file_forced' => !empty($forceFile)
+    'file_forced' => !empty($forceFile),
+    'endpoint_used' => 'root'
 ];
 
 echo json_encode($jsonData);

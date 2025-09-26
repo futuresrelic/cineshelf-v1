@@ -1785,6 +1785,8 @@ window.App = (function() {
     }
 
     // Server backup/restore functions
+// FIXED Server backup/restore functions - replace these in your app.js
+
     async function backupToServer() {
         const serverStatus = document.getElementById('serverStatus');
         
@@ -1803,17 +1805,20 @@ window.App = (function() {
                 }
             };
             
-            const endpoints = ['backup.php', 'api/backup', 'data/backup.php'];
+            // FIXED ENDPOINTS - removed invalid endpoints and corrected API path
+            const endpoints = ['backup.php', 'api/backup.php'];
             let success = false;
             
             for (const endpoint of endpoints) {
                 try {
+                    console.log('CineShelf: Trying backup endpoint:', endpoint);
+                    
                     const response = await fetch(endpoint, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-User-ID': currentUser,
-                            'X-Backup-Version': '2.0'
+                            'X-Backup-Version': '2.1'
                         },
                         body: JSON.stringify(data)
                     });
@@ -1830,14 +1835,14 @@ window.App = (function() {
                             endpoint: endpoint
                         }));
                         
-                        serverStatus.textContent = `Backup successful! ${copies.length} items backed up to server.`;
+                        serverStatus.innerHTML = `✅ Backup successful! ${copies.length} items backed up to server.`;
                         serverStatus.className = 'status success';
                         serverStatus.style.display = 'block';
                         setTimeout(() => serverStatus.style.display = 'none', 4000);
                         break;
                     }
                 } catch (endpointError) {
-                    console.log(`Endpoint ${endpoint} failed:`, endpointError);
+                    console.log(`Backup endpoint ${endpoint} failed:`, endpointError);
                 }
             }
             
@@ -1848,10 +1853,9 @@ window.App = (function() {
         } catch (error) {
             console.error('Backup error:', error);
             serverStatus.innerHTML = `
-                <strong>Backup failed</strong><br>
-                Please create these server files:<br>
-                <code>backup.php</code> - to save data<br>
-                <code>restore.php</code> - to load data<br>
+                <strong>❌ Backup failed</strong><br>
+                Please check server files:<br>
+                <code>backup.php</code> and <code>api/backup.php</code><br>
                 <small>Data count: ${copies.length} items, ${movies.length} movies</small>
             `;
             serverStatus.className = 'status error';
@@ -1867,9 +1871,11 @@ window.App = (function() {
             console.log('CineShelf: Starting restore for user:', currentUser);
             console.log('CineShelf: Force file:', forceFile);
             
-            const endpoints = [`restore.php?user=${encodeURIComponent(currentUser)}${forceFile ? `&file=${encodeURIComponent(forceFile)}` : ''}`, 
-                             `api/restore/${encodeURIComponent(currentUser)}`, 
-                             `data/restore.php?user=${encodeURIComponent(currentUser)}`];
+            // FIXED ENDPOINTS - corrected API path and removed invalid endpoint
+            const endpoints = [
+                `restore.php?user=${encodeURIComponent(currentUser)}${forceFile ? `&file=${encodeURIComponent(forceFile)}` : ''}`, 
+                `api/restore.php?user=${encodeURIComponent(currentUser)}${forceFile ? `&file=${encodeURIComponent(forceFile)}` : ''}`
+            ];
             
             let data = null;
             let successEndpoint = null;
@@ -1877,7 +1883,7 @@ window.App = (function() {
             
             for (const endpoint of endpoints) {
                 try {
-                    console.log('CineShelf: Trying endpoint:', endpoint);
+                    console.log('CineShelf: Trying restore endpoint:', endpoint);
                     
                     const response = await fetch(endpoint, {
                         method: 'GET',
@@ -1957,6 +1963,7 @@ window.App = (function() {
 Continue with restore?`;
             
             if (confirm(confirmMessage)) {
+                // Create safety backup
                 const safetyBackup = {
                     copies: JSON.parse(JSON.stringify(copies)),
                     movies: JSON.parse(JSON.stringify(movies)),
@@ -1966,6 +1973,7 @@ Continue with restore?`;
                 };
                 localStorage.setItem(`cineshelf_safety_backup_${currentUser}`, JSON.stringify(safetyBackup));
                 
+                // Clear current data
                 copies = [];
                 movies = [];
                 customEditions = [];
@@ -1974,10 +1982,12 @@ Continue with restore?`;
                 localStorage.removeItem(`cineshelf_movies_${currentUser}`);
                 localStorage.removeItem(STORAGE_KEYS.customEditions);
                 
+                // Load server data
                 copies = JSON.parse(JSON.stringify(data.copies)) || [];
                 movies = JSON.parse(JSON.stringify(data.movies)) || [];
                 customEditions = JSON.parse(JSON.stringify(data.customEditions)) || [];
 
+                // Fix any data integrity issues
                 let fixedItems = 0;
                 copies.forEach((copy, index) => {
                     if (!copy.id) {
@@ -1989,36 +1999,17 @@ Continue with restore?`;
                         fixedItems++;
                     }
                     if (copy.resolved === undefined) {
-                        copy.resolved = !!copy.movieId;
-                        fixedItems++;
-                    }
-                    
-                    if (copy.movieId && !movies.find(m => m.imdbID === copy.movieId)) {
-                        console.warn(`Copy "${copy.title}" links to missing movie ${copy.movieId}`);
-                        copy.resolved = false;
-                        copy.movieId = null;
+                        copy.resolved = !!(copy.movieId && copy.movieId !== 'Unknown');
                         fixedItems++;
                     }
                 });
-                
-                movies.forEach((movie, index) => {
-                    if (!movie.imdbID) {
-                        movie.imdbID = 'unknown_' + index;
-                        fixedItems++;
-                    }
-                    if (!movie.title) {
-                        movie.title = 'Unknown Title';
-                        fixedItems++;
-                    }
-                });
-                
+
+                // Save restored data
                 saveData();
-                saveCustomEditions();
                 updateUI();
-                updateEditionDropdown();
                 
                 const finalResolvedCount = copies.filter(c => c.resolved).length;
-                const finalUnresolvedCount = copies.filter(c => !c.resolved).length;
+                const finalUnresolvedCount = copies.length - finalResolvedCount;
                 const fileUsed = data._restore_metadata ? data._restore_metadata.filename_used : 'Unknown';
                 
                 serverStatus.innerHTML = `
