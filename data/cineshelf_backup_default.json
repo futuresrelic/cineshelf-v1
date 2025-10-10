@@ -1,0 +1,43 @@
+{
+    "user": "default",
+    "copies": [
+        {
+            "id": "copy_1760102548550_tqyo7pspo",
+            "title": "The Matrix",
+            "format": "DVD",
+            "region": "Region 1",
+            "discs": 1,
+            "edition": "Widescreen",
+            "languages": "",
+            "notes": "",
+            "upc": "",
+            "isWishlist": false,
+            "movieId": "603",
+            "resolved": true,
+            "created": "2025-10-10T13:22:28.550Z"
+        }
+    ],
+    "movies": [
+        {
+            "imdbID": "603",
+            "title": "The Matrix",
+            "year": 1999,
+            "posterIMG": "https:\/\/image.tmdb.org\/t\/p\/w500\/p96dm7sCMn4VYAStA6siNz30G1r.jpg",
+            "imdbRating": 8.233,
+            "plot": "Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth.",
+            "director": "Lana Wachowski",
+            "genre": "Action, Science Fiction",
+            "runtime": "136 min",
+            "rated": "Unknown"
+        }
+    ],
+    "customEditions": [],
+    "timestamp": "2025-10-10T13:22:51.355Z",
+    "_backup_metadata": {
+        "user": "default",
+        "timestamp": "2025-10-10T06:22:54-07:00",
+        "server_time": "2025-10-10 06:22:54",
+        "version": "3.0-unified",
+        "filename": "cineshelf_backup_default.json"
+    }
+}
