@@ -55,47 +55,12 @@
       "purpose": "any maskable"
     },
     {
-      "src": "icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "screenshot-mobile-1.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Main collection view"
-    },
-    {
-      "src": "screenshot-mobile-2.png",
-      "sizes": "390x844",
-      "type": "image/png", 
-      "form_factor": "narrow",
-      "label": "Barcode scanning interface"
-    }
-  ],
-  "features": [
-    "Barcode scanning for UPC codes",
-    "AI-powered cover image recognition",
-    "Movie database integration (TMDB)",
-    "Cross-device data synchronization",
-    "Offline functionality",
-    "Multiple user support",
-    "CSV data export/import",
-    "Wishlist management",
-    "Multiple view modes (grid, list, detail)"
-  ],
-  "related_applications": [],
-  "prefer_related_applications": false,
   "shortcuts": [
     {
       "name": "Scan Movie",
@@ -133,26 +98,5 @@
         }
       ]
     }
-  ],
-  "protocol_handlers": [
-    {
-      "protocol": "web+cineshelf",
-      "url": "./?data=%s"
-    }
-  ],
-  "file_handlers": [
-    {
-      "action": "./",
-      "accept": {
-        "text/csv": [".csv"],
-        "application/json": [".json"]
-      }
-    }
-  ],
-  "edge_side_panel": {
-    "preferred_width": 420
-  },
-  "launch_handler": {
-    "client_mode": "focus-existing"
-  }
+  ]
 }
