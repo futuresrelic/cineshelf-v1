@@ -2144,11 +2144,48 @@ window.App = (function() {
         }
     }
 
+    function updateCardSize(size) {
+        // Update CSS variable
+        document.documentElement.style.setProperty('--card-width', size + 'px');
+        
+        // Update display value
+        document.getElementById('cardSizeValue').textContent = size + 'px';
+        
+        // Save to settings
+        updateSetting('cardSize', size);
+    }
+
+    function updateGridColumns(type, columns) {
+        const grid = document.getElementById(type === 'collection' ? 'collectionGrid' : 'wishlistGrid');
+        const valueDisplay = document.getElementById(type === 'collection' ? 'collectionGridValue' : 'wishlistGridValue');
+        
+        // Update CSS variable
+        document.documentElement.style.setProperty(
+            type === 'collection' ? '--collection-columns' : '--wishlist-columns', 
+            columns
+        );
+        
+        // Update display
+        valueDisplay.textContent = columns;
+        
+        // Remove old grid-cols classes
+        grid.classList.remove('grid-cols-2', 'grid-cols-3', 'grid-cols-4', 'grid-cols-5', 'grid-cols-6', 'grid-cols-7', 'grid-cols-8');
+        
+        // Add new class for progressive hiding
+        grid.classList.add(`grid-cols-${columns}`);
+        
+        // Save to settings
+        updateSetting(`${type}GridColumns`, columns);
+    }
+
     // Return public API
     return {
+        init,
         switchTab,
         sortMovies,
         setViewMode,
+        updateCardSize,
+        updateGridColumns,
         skipToNextUnresolved,
         moveCopy,
         deleteCopy,

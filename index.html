@@ -206,6 +206,13 @@
     <!-- Collection Tab -->
     <div id="collection" class="tab-content">
         <div class="view-controls">
+            <div class="size-slider-control" style="display: flex; align-items: center; gap: 0.5rem; margin-right: 1rem;">
+                <span style="color: white; font-size: 0.9rem;">📐 Cards:</span>
+                <input type="range" id="wishlistGridSlider" min="2" max="8" value="4" step="1" 
+                       oninput="App.updateGridColumns('wishlist', this.value)" 
+                       style="width: 120px; cursor: pointer;">
+                <span id="wishlistGridValue" style="color: rgba(255,255,255,0.7); font-size: 0.85rem; min-width: 40px;">4</span>
+            </div>
             <div class="sort-controls" style="flex: 1; margin-bottom: 0;">
                 <div class="form-group">
                     <label for="collectionSort">Sort by:</label>
@@ -246,6 +253,13 @@
     <!-- Wishlist Tab -->
     <div id="wishlist" class="tab-content">
         <div class="view-controls">
+            <div class="size-slider-control" style="display: flex; align-items: center; gap: 0.5rem; margin-right: 1rem;">
+                <span style="color: white; font-size: 0.9rem;">📐 Cards:</span>
+                <input type="range" id="wishlistGridSlider" min="2" max="8" value="4" step="1" 
+                       oninput="App.updateGridColumns('wishlist', this.value)" 
+                       style="width: 120px; cursor: pointer;">
+                <span id="wishlistGridValue" style="color: rgba(255,255,255,0.7); font-size: 0.85rem; min-width: 40px;">4</span>
+            </div>
             <div class="sort-controls" style="flex: 1; margin-bottom: 0;">
                 <div class="form-group">
                     <label for="wishlistSort">Sort by:</label>

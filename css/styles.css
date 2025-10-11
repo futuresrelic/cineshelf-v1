@@ -364,6 +364,8 @@ body::before {
 }
 
 .movie-card {
+    width: var(--card-width);
+    height: auto; /* Changed from fixed height */
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -439,6 +441,14 @@ body::before {
     color: rgba(255, 255, 255, 0.8);
     font-size: 0.8rem;
     line-height: 1.5;
+}
+
+.movie-card img {
+    width: 100%;
+    height: auto; /* Show full poster, no cropping */
+    aspect-ratio: 2/3; /* Maintain movie poster aspect ratio */
+    object-fit: contain; /* Don't crop, show full image */
+    background: rgba(0,0,0,0.3); /* Show dark background if image doesn't fill */
 }
 
 .movie-card.list-item {

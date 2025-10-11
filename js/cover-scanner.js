@@ -287,9 +287,13 @@ window.CoverScanner = (function() {
             }
 
             const data = await response.json();
+            console.log('🔍 API Response:', data);
+
             const extractedText = data.choices[0].message.content.trim();
-            
+            console.log('📝 Extracted Text:', extractedText);
+
             showList(extractedText);
+            console.log('✅ showList() called');
             showCoverStatus(`✅ Found ${extractedText.split('\n').length} movie titles!`, 'success');
 
         } catch (error) {
@@ -300,41 +304,49 @@ window.CoverScanner = (function() {
     }
 
     function showList(text) {
-        const titles = text.split('\n').filter(title => title.trim());
+    console.log('🎬 showList() START');
+    console.log('📝 Input text:', text);
+    
+    const titles = text.split('\n').filter(title => title.trim());
+    console.log('📋 Titles:', titles);
+    
+    let html = '<h3 style="color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.6); margin-bottom: 1rem;">🎬 Extracted Movie Titles:</h3>';
+    html += '<div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 12px; margin: 1rem 0;">';
+    
+    titles.forEach((title, index) => {
+        const cleanTitle = title.trim().replace(/^\d+\.\s*/, '');
+        console.log(`  ${index + 1}. "${cleanTitle}"`);
         
-        let html = '<h3>🎬 Extracted Movie Titles:</h3>';
-        html += '<div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 12px; margin: 1rem 0;">';
-        
-        titles.forEach((title, index) => {
-            const cleanTitle = title.trim().replace(/^\d+\.\s*/, '');
-            html += `
-                <div style="margin: 0.5rem 0; padding: 0.75rem; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; gap: 0.75rem;">
-                    <span style="flex: 1; font-weight: 500;">${cleanTitle}</span>
-                    <button onclick="CoverScanner.useTitle('${cleanTitle.replace(/'/g, "\\'")}')" 
-                            style="background: #48bb78; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
-                        ➕ Add
-                    </button>
-                </div>
-            `;
-        });
-        
-        html += '</div>';
         html += `
-            <div style="margin: 1rem 0; display: flex; gap: 0.75rem;">
-                <button onclick="CoverScanner.copyText('${text.replace(/'/g, "\\'")}')" 
-                        style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; flex: 1;">
-                    📋 Copy List
-                </button>
-                <button onclick="CoverScanner.addNewTitle()" 
-                        style="background: #667eea; color: white; border: none; padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; flex: 1;">
-                    ➕ Add Custom Title
+            <div style="margin: 0.5rem 0; padding: 0.75rem; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; gap: 0.75rem;">
+                <span style="flex: 1; font-weight: 500; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">${cleanTitle}</span>
+                <button onclick="CoverScanner.useTitle('${cleanTitle.replace(/'/g, "\\'")}')" 
+                        style="background: #48bb78; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                    ➕ Add
                 </button>
             </div>
         `;
-        
-        const outputDiv = document.getElementById('outputArea') || createOutputArea();
-        outputDiv.innerHTML = html;
+    });
+    
+    html += '</div>';
+    
+    console.log('🔨 HTML built, length:', html.length);
+    
+    const outputDiv = document.getElementById('outputArea');
+    console.log('📦 outputArea element:', outputDiv);
+    
+    if (!outputDiv) {
+        console.error('❌ ERROR: Cannot find #outputArea element!');
+        alert('Error: Output area not found. Please refresh the page.');
+        return;
     }
+    
+    console.log('✅ Writing HTML to outputArea...');
+    outputDiv.innerHTML = html;
+    outputDiv.style.display = 'block';
+    
+    console.log('🎉 showList() COMPLETE');
+}
 
     function createOutputArea() {
         const outputDiv = document.createElement('div');
