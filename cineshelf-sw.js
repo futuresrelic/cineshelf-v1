@@ -1,5 +1,5 @@
 // Enhanced CineShelf Service Worker with Auto-Update Detection
-const CACHE_VERSION = 'v1.1.1'; // Change this to force updates
+const CACHE_VERSION = 'v1.1.2'; // Change this to force updates
 const CACHE_NAME = `cineshelf-${CACHE_VERSION}`;
 const DATA_CACHE_NAME = `cineshelf-data-${CACHE_VERSION}`;
 

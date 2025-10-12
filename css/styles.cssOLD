@@ -423,11 +423,17 @@ body::before {
 .movie-card .movie-poster {
     width: 100%;
     aspect-ratio: 2 / 3;
-    object-fit: cover; /* This ensures proper cropping if needed */
+    object-fit: cover;
     border-radius: 16px 16px 0 0; /* Round top corners only */
     margin-bottom: 0;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
     display: block;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.movie-card:hover .movie-poster {
+    transform: scale(1.02);
 }
 
 .movie-card-content {
@@ -496,8 +502,10 @@ body::before {
 .movie-card.detail-item .movie-poster {
     width: 90px !important;
     height: 135px !important;
+    aspect-ratio: 2 / 3;
     flex-shrink: 0;
     margin-bottom: 0 !important;
+    border-radius: 8px;
 }
 
 .movie-card.detail-item .movie-content {
@@ -522,14 +530,6 @@ body::before {
     line-height: 1.5;
 }
 
-.movie-card img {
-    width: 100%;
-    height: auto; /* Show full poster, no cropping */
-    aspect-ratio: 2/3; /* Maintain movie poster aspect ratio */
-    object-fit: contain; /* Don't crop, show full image */
-    background: rgba(0,0,0,0.3); /* Show dark background if image doesn't fill */
-}
-
 .movie-card.list-item {
     display: flex !important;
     padding: 1rem !important;
@@ -545,8 +545,10 @@ body::before {
 .movie-card.list-item .movie-poster {
     width: 50px !important;
     height: 75px !important;
+    aspect-ratio: 2 / 3;
     flex-shrink: 0;
     margin-bottom: 0 !important;
+    border-radius: 6px;
 }
 
 .movie-card.list-item .movie-content {
@@ -566,20 +568,18 @@ body::before {
     opacity: 0.9;
 }
 
-.movie-poster {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 0.75rem;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    transition: transform 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
+/* ==================================================
+   RESPONSIVE GRID COLUMNS (for slider layout)
+   ================================================== */
 
-.movie-poster:hover {
-    transform: scale(1.05);
-}
+.grid-cols-2 { display: grid; grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { display: grid; grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { display: grid; grid-template-columns: repeat(4, 1fr); }
+.grid-cols-5 { display: grid; grid-template-columns: repeat(5, 1fr); }
+.grid-cols-6 { display: grid; grid-template-columns: repeat(6, 1fr); }
+.grid-cols-7 { display: grid; grid-template-columns: repeat(7, 1fr); }
+.grid-cols-8 { display: grid; grid-template-columns: repeat(8, 1fr); }
+
 
 /* ==================================================
    PROGRESSIVE INFORMATION HIDING
@@ -1858,7 +1858,8 @@ body::before {
 
 .movie-card.small-item .movie-poster {
     width: 100% !important;
-    height: 130px !important;
+    aspect-ratio: 2 / 3;
+    height: auto !important;
     margin-bottom: 0.5rem !important;
     border-radius: 8px;
 }
@@ -2242,112 +2243,3 @@ body .tab-content:not(.active) {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
-/* ============================================== */
-/* CUSTOM GRID SIZE FIXES - Added by you         */
-/* Place this at the VERY BOTTOM of styles.css   */
-/* ============================================== */
-
-/* Fix for 8 columns - ultra compact */
-.grid-cols-8 .movie-card {
-    max-height: fit-content;
-}
-
-.grid-cols-8 .movie-card-content {
-    padding: 0.2rem !important;
-    gap: 0 !important;
-}
-
-.grid-cols-8 .movie-card .movie-title {
-    font-size: 0.65rem !important;
-    margin-bottom: 0.1rem !important;
-    -webkit-line-clamp: 1 !important;
-    line-height: 1.1 !important;
-    text-align: center;
-}
-
-/* Remove line breaks at 8 columns */
-.grid-cols-8 .movie-info br {
-    display: none !important;
-}
-
-/* Hide ALL info except year at 8 columns */
-.grid-cols-8 .movie-card-format,
-.grid-cols-8 .movie-card-rating,
-.grid-cols-8 .movie-card-runtime,
-.grid-cols-8 .movie-card-director,
-.grid-cols-8 .movie-card-genre {
-    display: none !important;
-}
-
-.grid-cols-8 .movie-card-year {
-    font-size: 0.6rem !important;
-    text-align: center;
-    opacity: 0.7;
-    display: inline !important;
-}
-
-.grid-cols-8 .movie-card .movie-info {
-    text-align: center;
-    line-height: 1 !important;
-    font-size: 0.6rem !important;
-}
-
-/* Tighter grid gap for 8 columns */
-.grid-cols-8 {
-    gap: 0.5rem !important;
-}
-
-/* Fix for 7 columns */
-.grid-cols-7 .movie-card-content {
-    padding: 0.35rem !important;
-    gap: 0.1rem !important;
-}
-
-.grid-cols-7 .movie-card .movie-title {
-    font-size: 0.7rem !important;
-    -webkit-line-clamp: 1 !important;
-    line-height: 1.1 !important;
-}
-
-/* Remove line breaks at 7 columns */
-.grid-cols-7 .movie-info br {
-    display: none !important;
-}
-
-/* Hide unnecessary info at 7 columns */
-.grid-cols-7 .movie-card-runtime,
-.grid-cols-7 .movie-card-director,
-.grid-cols-7 .movie-card-genre,
-.grid-cols-7 .movie-card-format {
-    display: none !important;
-}
-
-.grid-cols-7 .movie-card-year,
-.grid-cols-7 .movie-card-rating {
-    font-size: 0.55rem !important;
-    display: inline !important;
-}
-
-.grid-cols-6 .movie-card-rating {
-    font-size: 0.60rem !important;
-    display: inline !important;
-}
-
-.grid-cols-5 .movie-card-rating {
-    font-size: 0.65rem !important;
-    display: inline !important;
-}
-
-.grid-cols-4 .movie-card-rating {
-    font-size: 0.70rem !important;
-    display: inline !important;
-}
-
-.grid-cols-3 .movie-card-rating {
-    font-size: 0.75rem !important;
-    display: inline !important;
-}
-/* ============================================== */
-/* END OF CUSTOM FIXES                           */
-/* ============================================== */

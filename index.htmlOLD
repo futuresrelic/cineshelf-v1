@@ -208,10 +208,9 @@
         <div class="view-controls">
             <div class="size-slider-control" style="display: flex; align-items: center; gap: 0.5rem; margin-right: 1rem;">
                 <span style="color: white; font-size: 0.9rem;">📐 Cards:</span>
-                <input type="range" id="collectionGridSlider" min="2" max="8" value="4" step="1" 
-                       oninput="App.updateGridColumns('collection', this.value)" 
-                       style="width: 120px; cursor: pointer;">
-                <span id="collectionGridValue" style="color: rgba(255,255,255,0.7); font-size: 0.85rem; min-width: 40px;">4</span>
+                <input type="range" id="collectionGridSlider" min="2" max="8" value="4" step="1" style="width: 120px; cursor: pointer;">
+<span id="collectionGridValue" style="color: rgba(255,255,255,0.7); font-size: 0.85rem; min-width: 40px;">4</span>
+
             </div>
             <div class="sort-controls" style="flex: 1; margin-bottom: 0;">
                 <div class="form-group">
@@ -552,6 +551,27 @@
             </div>
         </div>
     </div>
+    <script>
+const App = window.App || {};
+
+App.updateGridColumns = function(view, columns) {
+    const gridId = view === 'collection' ? 'collectionGrid' : 'wishlistGrid';
+    const sliderLabelId = view === 'collection' ? 'collectionGridSlider' : 'wishlistGridValue';
+
+    const grid = document.getElementById(gridId);
+    const label = document.getElementById(sliderLabelId);
+
+    // Update the grid CSS variable
+    if (grid) {
+        grid.style.setProperty('--grid-columns', columns);
+    }
+
+    // Update the number label beside the slider
+    if (label) {
+        label.textContent = columns;
+    }
+};
+</script>
 
     <!-- Scripts -->
     <script src="js/barcode-scanner.js"></script>

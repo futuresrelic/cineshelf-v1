@@ -125,6 +125,42 @@ class CineShelfGlobal {
     }
 }
 
+// Wrap everything in an App object
+const App = {
+    init: function () {
+        // Existing init logic here, if any
+        console.log("App initialized");
+    },
+
+    updateGridColumns: function(view, columns) {
+    const gridId = view === 'collection' ? 'collectionGrid' : 'wishlistGrid';
+    const sliderLabelId = view === 'collection' ? 'collectionGridSlider' : 'wishlistGridValue';
+
+    const grid = document.getElementById(gridId);
+    const label = document.getElementById(sliderLabelId);
+
+    // Remove all grid-cols-* classes
+    grid.className = grid.className.replace(/\bgrid-cols-\d+\b/g, '').trim();
+
+    // Add the new class
+    grid.classList.add(`grid-cols-${columns}`);
+
+    if (label) {
+        label.textContent = columns;
+    }
+},
+
+    setViewMode: function (mode) {
+        console.log(`View mode set to: ${mode}`);
+        // You may want to implement toggling card layouts here
+    },
+
+    switchUser: function () {
+        console.log("Switch user triggered");
+        // You can implement user switching logic here
+    }
+};
+
 const globalDB = new CineShelfGlobal();
 globalDB.initUser();
 
@@ -1980,6 +2016,28 @@ window.App = (function() {
         }
     }
 
+    function updateGridColumns(tab, value) {
+    const gridElement = document.getElementById(`${tab}Grid`);
+    const labelElement = document.getElementById(`${tab}GridSlider`) || document.getElementById(`${tab}GridValue`);
+
+    // Clean previous grid-cols-* classes
+    gridElement.classList.forEach(cls => {
+        if (cls.startsWith("grid-cols-")) {
+            gridElement.classList.remove(cls);
+        }
+    });
+
+    // Apply the new grid-cols-N class
+    gridElement.classList.add(`grid-cols-${value}`);
+
+    // Update the slider label display
+    if (labelElement) labelElement.textContent = value;
+
+    // Re-render the cards
+    displayMovies(tab);
+    }
+
+
     function setTitleFromCoverScanner(title) {
         document.getElementById('movieTitle').value = title;
         switchTab('scan');
@@ -2193,6 +2251,7 @@ window.App = (function() {
         switchTab,
         sortMovies,
         setViewMode,
+        updateGridColumns,
         updateCardSize,
         updateGridColumns,
         skipToNextUnresolved,
@@ -2269,7 +2328,7 @@ const VersionManager = {
 };
 
 const AdminManager = {
-    adminUsers: ['admin', 'default', 'klindakoil'],
+    adminUsers: ['admin', 'klindakoil'],
     
     init() {
         const savedAdmins = localStorage.getItem('cineshelf-admin-users');
@@ -2454,21 +2513,38 @@ const AdminManager = {
 
 document.addEventListener('DOMContentLoaded', () => {
     AdminManager.init();
-    
+
     setTimeout(() => {
         VersionManager.updateVersionDisplay();
     }, 1000);
-    
+
     const userSelect = document.getElementById('currentUser');
     if (userSelect) {
         userSelect.addEventListener('change', () => {
             setTimeout(() => AdminManager.updateUIPermissions(), 100);
         });
     }
-    
+
     setTimeout(() => AdminManager.updateUIPermissions(), 500);
+
+    // 👇 YOUR NEW SLIDER LOGIC GOES HERE
+    const slider = document.getElementById('collectionGridSlider');
+    const valueDisplay = document.getElementById('collectionGridValue');
+
+    if (slider && valueDisplay && App && App.updateGridColumns) {
+        slider.addEventListener('input', function () {
+            const value = parseInt(this.value, 10);
+            App.updateGridColumns('collection', value);
+        });
+
+        // Set initial value on load
+        App.updateGridColumns('collection', parseInt(slider.value, 10));
+    }
 });
 
+
+// Make it globally accessible
+window.App = App;
 window.AdminManager = AdminManager;
 window.VersionManager = VersionManager;
 window.switchTab = window.App.switchTab;
