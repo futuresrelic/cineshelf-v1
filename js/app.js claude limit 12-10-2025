@@ -144,6 +144,8 @@ window.App = (function() {
     const DEFAULT_SETTINGS = {
         searchResultsLimit: 10,
         defaultViewMode: 'grid',
+        collectionGridColumns: 4,  // ADD THIS
+        wishlistGridColumns: 4,    // ADD THIS
         autoResolve: false,
         barcodeBeep: true,
         scannerVibration: true,
@@ -202,10 +204,7 @@ window.App = (function() {
         collection: 'grid',
         wishlist: 'grid'
     };
-    let currentFilter = {
-    collection: { letter: 'ALL' },
-    wishlist: { letter: 'ALL' }
-    };
+    
     let settings = { ...DEFAULT_SETTINGS };
 
     function debugLog(message, data = null) {
@@ -438,6 +437,7 @@ window.App = (function() {
         updateUI();
         setupEventListeners();
         updateEditionDropdown();
+        initializeSliders();
         
         setTimeout(() => {
             if (settings.debugMode) {
@@ -924,12 +924,12 @@ window.App = (function() {
     
     const viewMode = currentView[type] || 'grid';
     
-    // Save current grid-cols class
+    // FIXED: Save the current grid-cols-X class before resetting
     const currentGridCols = Array.from(grid.classList).find(cls => cls.startsWith('grid-cols-'));
     
     grid.className = 'movie-grid';
     
-    // Restore grid-cols class if in grid mode
+    // FIXED: Restore the grid-cols-X class if it exists
     if (currentGridCols && viewMode === 'grid') {
         grid.classList.add(currentGridCols);
     }
@@ -942,24 +942,7 @@ window.App = (function() {
         grid.classList.add('small-view');
     }
     
-    // Apply alphabetical filter
-    let displayCopies = filteredCopies;
-    const filterLetter = currentFilter[type].letter;
-    
-    if (filterLetter !== 'ALL') {
-        displayCopies = filteredCopies.filter(copy => {
-            const firstLetter = copy.title.charAt(0).toUpperCase();
-            if (filterLetter === '0-9') {
-                return /[0-9]/.test(firstLetter);
-            }
-            return firstLetter === filterLetter;
-        });
-    }
-    
-    const sortedCopies = sortCopies(displayCopies, currentSort[type]);
-    
-    // Update filter counter
-    updateFilterCounter(type, displayCopies.length, filteredCopies.length);
+    const sortedCopies = sortCopies(filteredCopies, currentSort[type]);
     
     grid.innerHTML = '';
 
@@ -968,35 +951,6 @@ window.App = (function() {
         const card = createMovieCard(copy, movie, type, viewMode);
         grid.appendChild(card);
     });
-}
-
-function updateFilterCounter(type, showing, total) {
-    const counter = document.getElementById(`${type}FilterCounter`);
-    if (counter) {
-        if (showing === total) {
-            counter.textContent = `${total} movies`;
-            counter.style.opacity = '0.7';
-        } else {
-            counter.textContent = `Showing ${showing} of ${total}`;
-            counter.style.opacity = '1';
-        }
-    }
-}
-
-function setLetterFilter(type, letter) {
-    currentFilter[type].letter = letter;
-    
-    // Update active button
-    const buttons = document.querySelectorAll(`#${type} .letter-filter-btn`);
-    buttons.forEach(btn => {
-        if (btn.dataset.letter === letter) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
-    });
-    
-    displayMovies(type);
 }
 
     function sortCopies(copiesToSort, sortBy) {
@@ -2016,27 +1970,33 @@ function setLetterFilter(type, letter) {
     // ========================================
 
     function setViewMode(type, mode) {
-        currentView[type] = mode;
-        
-        const container = document.getElementById(type).querySelector('.view-toggle');
-        container.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-        
-        const buttons = container.querySelectorAll('.view-btn');
-        buttons.forEach(btn => {
-            const onclick = btn.getAttribute('onclick');
-            if (onclick && onclick.includes(`'${mode}'`)) {
-                btn.classList.add('active');
-            }
-        });
-        
-        displayMovies(type);
-        
-        try {
-            localStorage.setItem('cineshelf_view', JSON.stringify(currentView));
-        } catch (error) {
-            console.error('Error saving view preference:', error);
+    currentView[type] = mode;
+    
+    const container = document.getElementById(type).querySelector('.view-toggle');
+    container.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+    
+    const buttons = container.querySelectorAll('.view-btn');
+    buttons.forEach(btn => {
+        const onclick = btn.getAttribute('onclick');
+        if (onclick && onclick.includes(`'${mode}'`)) {
+            btn.classList.add('active');
         }
+    });
+    
+    // FIXED: Show/hide slider based on view mode
+    const sliderControl = document.getElementById(type).querySelector('.size-slider-control');
+    if (sliderControl) {
+        sliderControl.style.display = (mode === 'grid') ? 'flex' : 'none';
     }
+    
+    displayMovies(type);
+    
+    try {
+        localStorage.setItem('cineshelf_view', JSON.stringify(currentView));
+    } catch (error) {
+        console.error('Error saving view preference:', error);
+    }
+}
 
     function setTitleFromCoverScanner(title) {
         document.getElementById('movieTitle').value = title;
@@ -2223,27 +2183,56 @@ function setLetterFilter(type, letter) {
     }
 
     function updateGridColumns(type, columns) {
-        const grid = document.getElementById(type === 'collection' ? 'collectionGrid' : 'wishlistGrid');
-        const valueDisplay = document.getElementById(type === 'collection' ? 'collectionGridValue' : 'wishlistGridValue');
-        
-        // Update CSS variable
-        document.documentElement.style.setProperty(
-            type === 'collection' ? '--collection-columns' : '--wishlist-columns', 
-            columns
-        );
-        
-        // Update display
-        valueDisplay.textContent = columns;
-        
-        // Remove old grid-cols classes
-        grid.classList.remove('grid-cols-2', 'grid-cols-3', 'grid-cols-4', 'grid-cols-5', 'grid-cols-6', 'grid-cols-7', 'grid-cols-8');
-        
-        // Add new class for progressive hiding
-        grid.classList.add(`grid-cols-${columns}`);
-        
-        // Save to settings
-        updateSetting(`${type}GridColumns`, columns);
+    const grid = document.getElementById(type === 'collection' ? 'collectionGrid' : 'wishlistGrid');
+    const valueDisplay = document.getElementById(type === 'collection' ? 'collectionGridValue' : 'wishlistGridValue');
+    
+    // Remove old grid-cols classes
+    grid.classList.remove('grid-cols-2', 'grid-cols-3', 'grid-cols-4', 'grid-cols-5', 'grid-cols-6', 'grid-cols-7', 'grid-cols-8');
+    
+    // Add new grid-cols class
+    grid.classList.add(`grid-cols-${columns}`);
+    
+    // Update display
+    valueDisplay.textContent = columns;
+    
+    // Save to settings
+    updateSetting(`${type}GridColumns`, columns);
+}
+
+function initializeSliders() {
+    // Load saved slider values from settings or use default (4)
+    const collectionColumns = settings.collectionGridColumns || 4;
+    const wishlistColumns = settings.wishlistGridColumns || 4;
+    
+    // Set slider values
+    const collectionSlider = document.getElementById('collectionGridSlider');
+    const wishlistSlider = document.getElementById('wishlistGridSlider');
+    
+    if (collectionSlider) {
+        collectionSlider.value = collectionColumns;
+        updateGridColumns('collection', collectionColumns);
     }
+    
+    if (wishlistSlider) {
+        wishlistSlider.value = wishlistColumns;
+        updateGridColumns('wishlist', wishlistColumns);
+    }
+    
+    // Initialize slider visibility based on view mode
+    const collectionViewMode = currentView.collection || 'grid';
+    const wishlistViewMode = currentView.wishlist || 'grid';
+    
+    const collectionSliderControl = document.querySelector('#collection .size-slider-control');
+    const wishlistSliderControl = document.querySelector('#wishlist .size-slider-control');
+    
+    if (collectionSliderControl) {
+        collectionSliderControl.style.display = (collectionViewMode === 'grid') ? 'flex' : 'none';
+    }
+    
+    if (wishlistSliderControl) {
+        wishlistSliderControl.style.display = (wishlistViewMode === 'grid') ? 'flex' : 'none';
+    }
+}
 
     // Return public API
     return {
@@ -2253,7 +2242,6 @@ function setLetterFilter(type, letter) {
         setViewMode,
         updateCardSize,
         updateGridColumns,
-        setLetterFilter,
         skipToNextUnresolved,
         moveCopy,
         deleteCopy,
@@ -2282,8 +2270,7 @@ function setLetterFilter(type, letter) {
         startEditMovie,
         cancelEdit,
         saveEditChanges,
-        getSettings: () => settings,
-        init
+        getSettings: () => settings
     };
 
 })();
