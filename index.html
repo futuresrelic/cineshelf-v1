@@ -287,7 +287,6 @@
         </div>
     </div>
 </div>
-        </div>
         <div id="collectionGrid" class="movie-grid"></div>
         <div id="collectionEmpty" class="empty-state">
             <h3>No Movies in Collection</h3>
@@ -296,38 +295,19 @@
     </div>
 
     <!-- Wishlist Tab -->
-    <div id="wishlist" class="tab-content">
-        <div class="view-controls">
-            <div class="size-slider-control" style="display: flex; align-items: center; gap: 0.5rem; margin-right: 1rem;">
-                <span style="color: white; font-size: 0.9rem;">📐 Cards:</span>
+<div id="wishlist" class="tab-content">
+    <div class="view-controls">
+        <!-- TOP ROW: Slider + View Buttons -->
+        <div class="view-controls-row">
+            <!-- Slider on LEFT -->
+            <div class="size-slider-control">
+                <span>📐 Cards:</span>
                 <input type="range" id="wishlistGridSlider" min="2" max="8" value="4" step="1" 
-                       oninput="App.updateGridColumns('wishlist', this.value)" 
-                       style="width: 120px; cursor: pointer;">
-                <span id="wishlistGridValue" style="color: rgba(255,255,255,0.7); font-size: 0.85rem; min-width: 40px;">4</span>
+                       oninput="App.updateGridColumns('wishlist', this.value)">
+                <span id="wishlistGridValue">4</span>
             </div>
-            <div class="sort-controls" style="flex: 1; margin-bottom: 0;">
-                <div class="form-group">
-                    <label for="wishlistSort">Sort by:</label>
-                    <select id="wishlistSort" onchange="App.sortMovies('wishlist', this.value)" autocomplete="off">
-                        <option value="title">Title (A-Z)</option>
-                        <option value="title-desc">Title (Z-A)</option>
-                        <option value="year">Year (Oldest First)</option>
-                        <option value="year-desc">Year (Newest First)</option>
-                        <option value="rating">Rating (Lowest First)</option>
-                        <option value="rating-desc">Rating (Highest First)</option>
-                        <option value="runtime" class="admin-feature">Runtime (Shortest First)</option>
-                        <option value="runtime-desc" class="admin-feature">Runtime (Longest First)</option>
-                        <option value="director" class="admin-feature">Director (A-Z)</option>
-                        <option value="director-desc" class="admin-feature">Director (Z-A)</option>
-                        <option value="genre">Genre (A-Z)</option>
-                        <option value="genre-desc">Genre (Z-A)</option>
-                        <option value="format" class="admin-feature">Format (A-Z)</option>
-                        <option value="format-desc" class="admin-feature">Format (Z-A)</option>
-                        <option value="added">Date Added (Oldest First)</option>
-                        <option value="added-desc">Date Added (Newest First)</option>
-                    </select>
-                </div>
-            </div>
+            
+            <!-- View Buttons on RIGHT -->
             <div class="view-toggle">
                 <button class="view-btn active" onclick="App.setViewMode('wishlist', 'grid')" title="Grid View">⊞</button>
                 <button class="view-btn admin-feature" onclick="App.setViewMode('wishlist', 'small')" title="Small Cards">⊡</button>
@@ -335,12 +315,77 @@
                 <button class="view-btn admin-feature" onclick="App.setViewMode('wishlist', 'list')" title="List View">☰</button>
             </div>
         </div>
-        <div id="wishlistGrid" class="movie-grid"></div>
-        <div id="wishlistEmpty" class="empty-state">
-            <h3>No Movies in Wishlist</h3>
-            <p>Add movies you want to buy to your wishlist!</p>
+        
+        <!-- Sort Controls -->
+        <div class="sort-controls">
+            <div class="form-group">
+                <label for="wishlistSort">Sort by:</label>
+                <select id="wishlistSort" onchange="App.sortMovies('wishlist', this.value)" autocomplete="off">
+                    <option value="title">Title (A-Z)</option>
+                    <option value="title-desc">Title (Z-A)</option>
+                    <option value="year">Year (Oldest First)</option>
+                    <option value="year-desc">Year (Newest First)</option>
+                    <option value="rating">Rating (Lowest First)</option>
+                    <option value="rating-desc">Rating (Highest First)</option>
+                    <option value="runtime" class="admin-feature">Runtime (Shortest First)</option>
+                    <option value="runtime-desc" class="admin-feature">Runtime (Longest First)</option>
+                    <option value="director" class="admin-feature">Director (A-Z)</option>
+                    <option value="director-desc" class="admin-feature">Director (Z-A)</option>
+                    <option value="genre">Genre (A-Z)</option>
+                    <option value="genre-desc">Genre (Z-A)</option>
+                    <option value="format" class="admin-feature">Format (A-Z)</option>
+                    <option value="format-desc" class="admin-feature">Format (Z-A)</option>
+                    <option value="added">Date Added (Oldest First)</option>
+                    <option value="added-desc">Date Added (Newest First)</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Alphabetical Filter -->
+        <div class="filter-section">
+            <div class="filter-header">
+                <span class="filter-label">Filter:</span>
+                <span id="wishlistFilterCounter" class="filter-counter">0 movies</span>
+            </div>
+            <div class="letter-filter">
+                <button class="letter-filter-btn active" data-letter="ALL" onclick="App.setLetterFilter('wishlist', 'ALL')">All</button>
+                <button class="letter-filter-btn" data-letter="0-9" onclick="App.setLetterFilter('wishlist', '0-9')">#</button>
+                <button class="letter-filter-btn" data-letter="A" onclick="App.setLetterFilter('wishlist', 'A')">A</button>
+                <button class="letter-filter-btn" data-letter="B" onclick="App.setLetterFilter('wishlist', 'B')">B</button>
+                <button class="letter-filter-btn" data-letter="C" onclick="App.setLetterFilter('wishlist', 'C')">C</button>
+                <button class="letter-filter-btn" data-letter="D" onclick="App.setLetterFilter('wishlist', 'D')">D</button>
+                <button class="letter-filter-btn" data-letter="E" onclick="App.setLetterFilter('wishlist', 'E')">E</button>
+                <button class="letter-filter-btn" data-letter="F" onclick="App.setLetterFilter('wishlist', 'F')">F</button>
+                <button class="letter-filter-btn" data-letter="G" onclick="App.setLetterFilter('wishlist', 'G')">G</button>
+                <button class="letter-filter-btn" data-letter="H" onclick="App.setLetterFilter('wishlist', 'H')">H</button>
+                <button class="letter-filter-btn" data-letter="I" onclick="App.setLetterFilter('wishlist', 'I')">I</button>
+                <button class="letter-filter-btn" data-letter="J" onclick="App.setLetterFilter('wishlist', 'J')">J</button>
+                <button class="letter-filter-btn" data-letter="K" onclick="App.setLetterFilter('wishlist', 'K')">K</button>
+                <button class="letter-filter-btn" data-letter="L" onclick="App.setLetterFilter('wishlist', 'L')">L</button>
+                <button class="letter-filter-btn" data-letter="M" onclick="App.setLetterFilter('wishlist', 'M')">M</button>
+                <button class="letter-filter-btn" data-letter="N" onclick="App.setLetterFilter('wishlist', 'N')">N</button>
+                <button class="letter-filter-btn" data-letter="O" onclick="App.setLetterFilter('wishlist', 'O')">O</button>
+                <button class="letter-filter-btn" data-letter="P" onclick="App.setLetterFilter('wishlist', 'P')">P</button>
+                <button class="letter-filter-btn" data-letter="Q" onclick="App.setLetterFilter('wishlist', 'Q')">Q</button>
+                <button class="letter-filter-btn" data-letter="R" onclick="App.setLetterFilter('wishlist', 'R')">R</button>
+                <button class="letter-filter-btn" data-letter="S" onclick="App.setLetterFilter('wishlist', 'S')">S</button>
+                <button class="letter-filter-btn" data-letter="T" onclick="App.setLetterFilter('wishlist', 'T')">T</button>
+                <button class="letter-filter-btn" data-letter="U" onclick="App.setLetterFilter('wishlist', 'U')">U</button>
+                <button class="letter-filter-btn" data-letter="V" onclick="App.setLetterFilter('wishlist', 'V')">V</button>
+                <button class="letter-filter-btn" data-letter="W" onclick="App.setLetterFilter('wishlist', 'W')">W</button>
+                <button class="letter-filter-btn" data-letter="X" onclick="App.setLetterFilter('wishlist', 'X')">X</button>
+                <button class="letter-filter-btn" data-letter="Y" onclick="App.setLetterFilter('wishlist', 'Y')">Y</button>
+                <button class="letter-filter-btn" data-letter="Z" onclick="App.setLetterFilter('wishlist', 'Z')">Z</button>
+            </div>
         </div>
     </div>
+    
+    <div id="wishlistGrid" class="movie-grid"></div>
+    <div id="wishlistEmpty" class="empty-state">
+        <h3>No Movies in Wishlist</h3>
+        <p>Add movies you want to buy to your wishlist!</p>
+    </div>
+</div>
 
     <!-- Resolve Tab (Admin Only) -->
     <div id="resolve" class="tab-content admin-only">

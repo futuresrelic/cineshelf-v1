@@ -202,7 +202,7 @@ window.App = (function() {
         collection: 'grid',
         wishlist: 'grid'
     };
-    let currentFilter = {
+    let currentFilter = currentFilter || {
     collection: { letter: 'ALL' },
     wishlist: { letter: 'ALL' }
     };
@@ -913,14 +913,19 @@ window.App = (function() {
     const grid = document.getElementById(gridId);
     const empty = document.getElementById(emptyId);
 
-    if (filteredCopies.length === 0) {
-        grid.innerHTML = '';
-        grid.className = 'movie-grid';
-        empty.style.display = 'block';
+    if (!grid) {
+        console.error(`Grid element not found: ${gridId}`);
         return;
     }
 
-    empty.style.display = 'none';
+    if (filteredCopies.length === 0) {
+        grid.innerHTML = '';
+        grid.className = 'movie-grid';
+        if (empty) empty.style.display = 'block';
+        return;
+    }
+
+    if (empty) empty.style.display = 'none';
     
     const viewMode = currentView[type] || 'grid';
     
@@ -942,23 +947,25 @@ window.App = (function() {
         grid.classList.add('small-view');
     }
     
-    // Apply alphabetical filter
+    // Apply alphabetical filter ONLY if filter exists
     let displayCopies = filteredCopies;
-    const filterLetter = currentFilter[type].letter;
-    
-    if (filterLetter !== 'ALL') {
-        displayCopies = filteredCopies.filter(copy => {
-            const firstLetter = copy.title.charAt(0).toUpperCase();
-            if (filterLetter === '0-9') {
-                return /[0-9]/.test(firstLetter);
-            }
-            return firstLetter === filterLetter;
-        });
+    if (currentFilter && currentFilter[type]) {
+        const filterLetter = currentFilter[type].letter;
+        
+        if (filterLetter && filterLetter !== 'ALL') {
+            displayCopies = filteredCopies.filter(copy => {
+                const firstLetter = copy.title.charAt(0).toUpperCase();
+                if (filterLetter === '0-9') {
+                    return /[0-9]/.test(firstLetter);
+                }
+                return firstLetter === filterLetter;
+            });
+        }
     }
     
     const sortedCopies = sortCopies(displayCopies, currentSort[type]);
     
-    // Update filter counter
+    // Update filter counter if it exists
     updateFilterCounter(type, displayCopies.length, filteredCopies.length);
     
     grid.innerHTML = '';
