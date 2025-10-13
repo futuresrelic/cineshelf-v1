@@ -410,9 +410,10 @@ body::before {
 
 .movie-card.detail-item {
     display: flex !important;
-    padding: 1.5rem;
-    gap: 1.5rem;
-    align-items: center;
+    flex-direction: row !important;
+    padding: 1.5rem !important;
+    gap: 1.5rem !important;
+    align-items: flex-start !important;
     transform: none;
 }
 
@@ -494,32 +495,39 @@ body::before {
 }
 
 .movie-card.detail-item .movie-poster {
-    width: 90px !important;
-    height: 135px !important;
+    width: 120px !important;
+    height: 180px !important;
+    aspect-ratio: 2 / 3;
     flex-shrink: 0;
     margin-bottom: 0 !important;
+    border-radius: 12px !important;
+    object-fit: cover;
 }
 
 .movie-card.detail-item .movie-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    min-width: 0;
 }
 
 .movie-card.detail-item .movie-title {
-    font-size: 1.1rem !important;
-    margin-bottom: 0.5rem;
+    font-size: 1.2rem !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1.3 !important;
+    font-weight: 700 !important;
 }
 
 .movie-card.detail-item .movie-info {
-    font-size: 0.9rem !important;
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
 }
 
 .movie-card.detail-item .movie-details {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.8rem;
-    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85rem !important;
+    line-height: 1.6 !important;
 }
 
 .movie-card img {
@@ -532,9 +540,10 @@ body::before {
 
 .movie-card.list-item {
     display: flex !important;
+    flex-direction: row !important;
     padding: 1rem !important;
-    gap: 1rem;
-    align-items: center;
+    gap: 1rem !important;
+    align-items: center !important;
     transform: none;
 }
 
@@ -543,27 +552,37 @@ body::before {
 }
 
 .movie-card.list-item .movie-poster {
-    width: 50px !important;
-    height: 75px !important;
+    width: 60px !important;
+    height: 90px !important;
+    aspect-ratio: 2 / 3;
     flex-shrink: 0;
     margin-bottom: 0 !important;
+    border-radius: 8px !important;
+    object-fit: cover;
 }
 
 .movie-card.list-item .movie-content {
     flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
 }
 
 .movie-card.list-item .movie-title {
     font-size: 1rem !important;
     margin-bottom: 0.25rem !important;
-    line-height: 1.3;
+    line-height: 1.3 !important;
+    font-weight: 600 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .movie-card.list-item .movie-info {
-    font-size: 0.8rem !important;
+    font-size: 0.85rem !important;
     opacity: 0.9;
+    line-height: 1.4 !important;
 }
 
 .movie-poster {

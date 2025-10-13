@@ -202,7 +202,7 @@ window.App = (function() {
         collection: 'grid',
         wishlist: 'grid'
     };
-    let currentFilter = currentFilter || {
+    let currentFilter = {
     collection: { letter: 'ALL' },
     wishlist: { letter: 'ALL' }
     };
@@ -432,22 +432,73 @@ window.App = (function() {
         }
     }
     
+    function initializeSliders() {
+    // Load saved slider values from settings or use default (4)
+    const collectionColumns = settings.collectionGridColumns || 4;
+    const wishlistColumns = settings.wishlistGridColumns || 4;
+    
+    // Set slider values
+    const collectionSlider = document.getElementById('collectionGridSlider');
+    const wishlistSlider = document.getElementById('wishlistGridSlider');
+    
+    if (collectionSlider) {
+        collectionSlider.value = collectionColumns;
+        updateGridColumns('collection', collectionColumns);
+    }
+    
+    if (wishlistSlider) {
+        wishlistSlider.value = wishlistColumns;
+        updateGridColumns('wishlist', wishlistColumns);
+    }
+    
+    // Initialize slider visibility based on view mode
+    const collectionViewMode = currentView.collection || 'grid';
+    const wishlistViewMode = currentView.wishlist || 'grid';
+    
+    const collectionSliderControl = document.querySelector('#collection .size-slider-control');
+    const wishlistSliderControl = document.querySelector('#wishlist .size-slider-control');
+    
+    if (collectionSliderControl) {
+        collectionSliderControl.style.display = (collectionViewMode === 'grid') ? 'flex' : 'none';
+    }
+    
+    if (wishlistSliderControl) {
+        wishlistSliderControl.style.display = (wishlistViewMode === 'grid') ? 'flex' : 'none';
+    }
+}
+
     function init() {
         loadData();
         loadCustomEditions();
         updateUI();
         setupEventListeners();
         updateEditionDropdown();
-        
+        initializeSliders();
         setTimeout(() => {
-            if (settings.debugMode) {
-                console.log('CineShelf Debug: Initializing Settings UI');
-            }
-            updateSettingsUI();
-        }, 200);
+        const collectionSlider = document.getElementById('collectionGridSlider');
+        const wishlistSlider = document.getElementById('wishlistGridSlider');
         
-        setTimeout(loadUnresolvedMoviesFromServer, 1000);
-    }
+        if (collectionSlider) {
+            const colValue = parseInt(collectionSlider.value);
+            const colGrid = document.getElementById('collectionGrid');
+            if (colGrid) {
+                colGrid.classList.remove('grid-cols-2', 'grid-cols-3', 'grid-cols-4', 'grid-cols-5', 'grid-cols-6', 'grid-cols-7', 'grid-cols-8');
+                colGrid.classList.add(`grid-cols-${colValue}`);
+            }
+        }
+        
+        if (wishlistSlider) {
+            const wishValue = parseInt(wishlistSlider.value);
+            const wishGrid = document.getElementById('wishlistGrid');
+            if (wishGrid) {
+                wishGrid.classList.remove('grid-cols-2', 'grid-cols-3', 'grid-cols-4', 'grid-cols-5', 'grid-cols-6', 'grid-cols-7', 'grid-cols-8');
+                wishGrid.classList.add(`grid-cols-${wishValue}`);
+            }
+        }
+    }, 200);
+    
+    switchTab('scan');
+}
 
     function setupEventListeners() {
         const searchBtn = document.getElementById('searchBtn');
@@ -502,61 +553,85 @@ window.App = (function() {
     }
 
     function switchTab(tabName) {
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
-
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
-        });
-        document.getElementById(tabName).classList.add('active');
-
-        if (tabName === 'collection') {
-            document.getElementById('collectionSort').value = currentSort.collection;
-            updateViewButtons('collection');
-            displayMovies('collection');
-        } else if (tabName === 'wishlist') {
-            document.getElementById('wishlistSort').value = currentSort.wishlist;
-            updateViewButtons('wishlist');
-            displayMovies('wishlist');
-        } else if (tabName === 'covers') {
-            if (window.CoverScanner && window.CoverScanner.updateApiKeyFromSettings) {
-                setTimeout(() => window.CoverScanner.updateApiKeyFromSettings(), 100);
-            }
-        } else if (tabName === 'resolve') {
-            displayUnresolvedItems();
-        } else if (tabName === 'data') {
-            updateStats();
-            updateUserDropdown();
-        } else if (tabName === 'settings') {
-            setTimeout(() => {
-                updateSettingsUI();
-                displayCustomEditions();
-            }, 50);
-        } else if (tabName === 'scan') {
-            updateResolveNextSection();
-            updateEditSection();
-            updateEditionDropdown();
-        }
-
-        if (window.AdminManager) {
-            setTimeout(() => AdminManager.updateUIPermissions(), 100);
-        }
+    // Remove active from all tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Add active to clicked tab - WITH SAFETY CHECK
+    const clickedTab = document.querySelector(`[onclick*="switchTab('${tabName}')"]`);
+    if (clickedTab) {
+        clickedTab.classList.add('active');
     }
 
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Show the selected tab content
+    const tabContent = document.getElementById(tabName);
+    if (tabContent) {
+        tabContent.classList.add('active');
+    }
+
+    // Tab-specific initialization
+    if (tabName === 'collection') {
+        const sortSelect = document.getElementById('collectionSort');
+        if (sortSelect) {
+            sortSelect.value = currentSort.collection;
+        }
+        updateViewButtons('collection');
+        displayMovies('collection');
+    } else if (tabName === 'wishlist') {
+        const sortSelect = document.getElementById('wishlistSort');
+        if (sortSelect) {
+            sortSelect.value = currentSort.wishlist;
+        }
+        updateViewButtons('wishlist');
+        displayMovies('wishlist');
+    } else if (tabName === 'covers') {
+        if (window.CoverScanner && window.CoverScanner.updateApiKeyFromSettings) {
+            setTimeout(() => window.CoverScanner.updateApiKeyFromSettings(), 100);
+        }
+    } else if (tabName === 'resolve') {
+        displayUnresolvedItems();
+    } else if (tabName === 'data') {
+        updateStats();
+        updateUserDropdown();
+    } else if (tabName === 'settings') {
+        setTimeout(() => {
+            updateSettingsUI();
+            displayCustomEditions();
+        }, 50);
+    } else if (tabName === 'scan') {
+        updateResolveNextSection();
+        updateEditSection();
+        updateEditionDropdown();
+    }
+
+    // Update admin permissions
+    if (window.AdminManager) {
+        setTimeout(() => AdminManager.updateUIPermissions(), 100);
+    }
+}
+
     function updateViewButtons(type) {
-        const container = document.getElementById(type).querySelector('.view-toggle');
-        container.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-        
-        const currentMode = currentView[type] || 'grid';
-        const buttons = container.querySelectorAll('.view-btn');
-        buttons.forEach(btn => {
-            const onclick = btn.getAttribute('onclick');
-            if (onclick && onclick.includes(`'${currentMode}'`)) {
-                btn.classList.add('active');
-            }
-        });
+    const container = document.getElementById(type);
+    if (!container) return; // Safety check
+    
+    const viewToggle = container.querySelector('.view-toggle');
+    if (!viewToggle) return; // Safety check
+    
+    viewToggle.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+    
+    const buttons = viewToggle.querySelectorAll('.view-btn');
+    buttons.forEach(btn => {
+        const onclick = btn.getAttribute('onclick');
+        if (onclick && onclick.includes(`'${currentView[type]}'`)) {
+            btn.classList.add('active');
+        }
+    });
     }
 
     async function searchMovies() {
