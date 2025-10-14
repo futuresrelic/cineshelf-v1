@@ -495,7 +495,7 @@ window.App = (function() {
                 wishGrid.classList.add(`grid-cols-${wishValue}`);
             }
         }
-    }, 200);
+    }, 500);
     
     switchTab('scan');
 }
@@ -1943,20 +1943,25 @@ function setLetterFilter(type, letter) {
         }
     }
 
-    async function restoreFromServer(forceFile = null) {
+async function restoreFromServer(forceFile = null) {
         const serverStatus = document.getElementById('serverStatus');
         
         try {
             console.log('CineShelf: Starting restore for user:', currentUser);
             
+            // Add cache-busting timestamp
+            const timestamp = new Date().getTime();
+            
             // Build URL - Use ONLY root restore.php
-            const url = `restore.php?user=${encodeURIComponent(currentUser)}${forceFile ? `&file=${encodeURIComponent(forceFile)}` : ''}`;
+            const url = `restore.php?user=${encodeURIComponent(currentUser)}${forceFile ? `&file=${encodeURIComponent(forceFile)}` : ''}&_=${timestamp}`;
             
             const response = await fetch(url, {
                 method: 'GET',
+                cache: 'no-store',
                 headers: {
                     'X-User-ID': currentUser,
-                    'X-Restore-Version': '3.0'
+                    'X-Restore-Version': '3.0',
+                    'Cache-Control': 'no-cache'
                 }
             });
             

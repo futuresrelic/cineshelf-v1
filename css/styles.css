@@ -2713,3 +2713,84 @@ body .tab-content:not(.active) {
         min-width: 28px;
     }
 }
+
+@media (max-width: 420px) {
+    .view-controls-row {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+    
+    .size-slider-control,
+    .view-toggle {
+        width: 100% !important;
+    }
+    
+    .filter-section {
+        padding: 0.75rem !important;
+    }
+    
+    .letter-filter-btn {
+        padding: 0.5rem 0.65rem !important;
+        min-width: 34px !important;
+        font-size: 0.75rem !important;
+    }
+}
+
+/* ============================================== */
+/* MOBILE LAYOUT FIXES                           */
+/* Add at the VERY BOTTOM of styles.css         */
+/* ============================================== */
+
+@media (max-width: 420px) {
+    /* Stack slider and view buttons vertically */
+    .view-controls-row {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        width: 100% !important;
+    }
+    
+    /* Full width slider and buttons */
+    .size-slider-control,
+    .view-toggle {
+        width: 100% !important;
+    }
+    
+    .size-slider-control {
+        justify-content: space-between !important;
+    }
+    
+    .size-slider-control input[type="range"] {
+        flex: 1 !important;
+        max-width: none !important;
+        width: 100% !important;
+    }
+    
+    /* Better touch targets for letter filter */
+    .letter-filter {
+        gap: 0.5rem !important;
+    }
+    
+    .letter-filter-btn {
+        padding: 0.65rem 0.75rem !important;
+        min-width: 38px !important;
+        font-size: 0.8rem !important;
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Ensure filter section doesn't overflow */
+    .filter-section {
+        padding: 0.75rem !important;
+        overflow-x: hidden;
+    }
+    
+    /* View toggle buttons spread out */
+    .view-toggle {
+        justify-content: space-around !important;
+    }
+    
+    .view-btn {
+        flex: 1 !important;
+        padding: 0.6rem !important;
+    }
+}

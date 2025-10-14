@@ -1,142 +1,126 @@
-// Enhanced CineShelf Service Worker with Auto-Update Detection
-const CACHE_VERSION = 'v1.2.0'; // Change this to force updates
+// CineShelf Service Worker - Reduced CSS/JS Caching
+const CACHE_VERSION = 'v1.6.6'; // Bump this to force shell updates
 const CACHE_NAME = `cineshelf-${CACHE_VERSION}`;
 const DATA_CACHE_NAME = `cineshelf-data-${CACHE_VERSION}`;
 
+// Only cache essential shell files (no CSS/JS here)
 const urlsToCache = [
     './',
     './index.html',
-    './css/styles.css',
-    './js/app.js',
-    './js/cover-scanner.js',
-    './js/barcode-scanner.js',
-    './js/service-worker.js',
     './manifest.json',
     'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js'
 ];
 
-// Install event - cache resources
+// Install event - cache minimal shell
 self.addEventListener('install', event => {
     console.log(`CineShelf: Service Worker ${CACHE_VERSION} installing`);
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then(cache => {
-                console.log('CineShelf: Caching app shell');
-                return cache.addAll(urlsToCache);
-            })
+            .then(cache => cache.addAll(urlsToCache))
             .catch(error => {
                 console.log('CineShelf: Cache failed:', error);
                 return Promise.resolve();
             })
     );
-    // Force the waiting service worker to become the active service worker
     self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event - clean old caches
 self.addEventListener('activate', event => {
     console.log(`CineShelf: Service Worker ${CACHE_VERSION} activating`);
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    // Delete old caches that don't match current version
                     if (cacheName.startsWith('cineshelf-') && cacheName !== CACHE_NAME && cacheName !== DATA_CACHE_NAME) {
                         console.log('CineShelf: Deleting old cache:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
             );
-        }).then(() => {
-            // Take control of all pages immediately
-            return self.clients.claim();
-        }).then(() => {
-            // Notify all clients about the update
-            return self.clients.matchAll().then(clients => {
-                clients.forEach(client => {
-                    client.postMessage({
-                        type: 'SW_UPDATED',
-                        version: CACHE_VERSION,
-                        message: 'CineShelf has been updated!'
-                    });
-                });
-            });
-        })
+        }).then(() => self.clients.claim())
+          .then(() => {
+              return self.clients.matchAll().then(clients => {
+                  clients.forEach(client => {
+                      client.postMessage({
+                          type: 'SW_UPDATED',
+                          version: CACHE_VERSION,
+                          message: 'CineShelf has been updated!'
+                      });
+                  });
+              });
+          })
     );
 });
 
-// Fetch event - serve from cache when offline
+// Fetch event - skip caching for .css and .js
 self.addEventListener('fetch', event => {
-    // Skip non-GET requests
-    if (event.request.method !== 'GET') {
+    const requestURL = new URL(event.request.url);
+
+    if (event.request.method !== 'GET') return;
+
+    if (requestURL.pathname.includes('backup.php') || 
+        requestURL.pathname.includes('restore.php')) {
+        event.respondWith(fetch(event.request));
         return;
     }
 
-    // Handle API calls differently
-    if (event.request.url.includes('api.themoviedb.org') || 
-        event.request.url.includes('api.openai.com')) {
-        
-        // For API calls, try network first, then cache
+    // API calls: network first, then cache
+    if (requestURL.hostname.includes('api.themoviedb.org') || 
+        requestURL.hostname.includes('api.openai.com')) {
         event.respondWith(
             fetch(event.request)
                 .then(response => {
-                    // Don't cache API errors
                     if (response.status === 200) {
-                        const responseClone = response.clone();
-                        caches.open(DATA_CACHE_NAME).then(cache => {
-                            cache.put(event.request, responseClone);
-                        });
+                        const clone = response.clone();
+                        caches.open(DATA_CACHE_NAME).then(cache => cache.put(event.request, clone));
                     }
                     return response;
                 })
-                .catch(() => {
-                    // Fallback to cache if network fails
-                    return caches.match(event.request);
-                })
+                .catch(() => caches.match(event.request))
         );
         return;
     }
 
-    // For app resources, cache first, then network
+    // Always bypass cache for CSS/JS
+    if (requestURL.pathname.endsWith('.css') || requestURL.pathname.endsWith('.js')) {
+        event.respondWith(
+            fetch(event.request)
+                .then(response => {
+                    // Optionally cache updated version
+                    const clone = response.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+                    return response;
+                })
+                .catch(() => caches.match(event.request)) // fallback if offline
+        );
+        return;
+    }
+
+    // Default: cache first, then network
     event.respondWith(
         caches.match(event.request)
             .then(response => {
-                // Return cached version if available
-                if (response) {
-                    return response;
-                }
-                
-                // Otherwise, fetch from network
-                return fetch(event.request)
-                    .then(response => {
-                        // Don't cache non-successful responses
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
-                            return response;
-                        }
+                return response || fetch(event.request).then(fetchResponse => {
+                    if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+                        return fetchResponse;
+                    }
 
-                        // Clone the response since it can only be consumed once
-                        const responseToCache = response.clone();
+                    const responseToCache = fetchResponse.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
 
-                        caches.open(CACHE_NAME)
-                            .then(cache => {
-                                cache.put(event.request, responseToCache);
-                            });
-
-                        return response;
-                    });
+                    return fetchResponse;
+                });
             })
     );
 });
 
-// Listen for messages from the main thread
+// Message event listener
 self.addEventListener('message', event => {
-    if (event.data && event.data.type === 'SKIP_WAITING') {
-        // Force update when requested
+    if (event.data?.type === 'SKIP_WAITING') {
         self.skipWaiting();
     }
-    
-    if (event.data && event.data.type === 'FORCE_REFRESH') {
-        // Clear all caches and force refresh
+    if (event.data?.type === 'FORCE_REFRESH') {
         event.waitUntil(
             caches.keys().then(cacheNames => {
                 return Promise.all(
@@ -148,7 +132,6 @@ self.addEventListener('message', event => {
                     })
                 );
             }).then(() => {
-                // Notify all clients to refresh
                 return self.clients.matchAll().then(clients => {
                     clients.forEach(client => {
                         client.postMessage({
@@ -162,15 +145,14 @@ self.addEventListener('message', event => {
     }
 });
 
-// Background sync for offline actions (optional)
+// Background sync
 self.addEventListener('sync', event => {
     if (event.tag === 'background-sync') {
         console.log('CineShelf: Background sync triggered');
-        // Handle background sync tasks here
     }
 });
 
-// Push notifications (future feature)
+// Push notifications
 self.addEventListener('push', event => {
     if (event.data) {
         const data = event.data.json();
@@ -180,7 +162,6 @@ self.addEventListener('push', event => {
             badge: './icon-180.png',
             data: data.data
         };
-        
         event.waitUntil(
             self.registration.showNotification(data.title, options)
         );
