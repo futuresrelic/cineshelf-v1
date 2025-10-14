@@ -1,5 +1,5 @@
-// CineShelf Service Worker - Reduced CSS/JS Caching
-const CACHE_VERSION = 'v1.6.6'; // Bump this to force shell updates
+// CineShelf Service Worker - FORCE UPDATE VERSION
+const CACHE_VERSION = 'v1.7.0'; // ⬆️ BUMPED VERSION TO FORCE UPDATE
 const CACHE_NAME = `cineshelf-${CACHE_VERSION}`;
 const DATA_CACHE_NAME = `cineshelf-data-${CACHE_VERSION}`;
 
@@ -22,43 +22,50 @@ self.addEventListener('install', event => {
                 return Promise.resolve();
             })
     );
-    self.skipWaiting();
+    self.skipWaiting(); // Force immediate activation
 });
 
-// Activate event - clean old caches
+// Activate event - AGGRESSIVE cache deletion
 self.addEventListener('activate', event => {
-    console.log(`CineShelf: Service Worker ${CACHE_VERSION} activating`);
+    console.log(`CineShelf: Service Worker ${CACHE_VERSION} activating - CLEARING ALL OLD CACHES`);
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    if (cacheName.startsWith('cineshelf-') && cacheName !== CACHE_NAME && cacheName !== DATA_CACHE_NAME) {
-                        console.log('CineShelf: Deleting old cache:', cacheName);
+                    // Delete ANY cache that doesn't match current version
+                    if (cacheName.startsWith('cineshelf-') && 
+                        cacheName !== CACHE_NAME && 
+                        cacheName !== DATA_CACHE_NAME) {
+                        console.log('CineShelf: 🗑️ DELETING OLD CACHE:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
             );
-        }).then(() => self.clients.claim())
-          .then(() => {
-              return self.clients.matchAll().then(clients => {
-                  clients.forEach(client => {
-                      client.postMessage({
-                          type: 'SW_UPDATED',
-                          version: CACHE_VERSION,
-                          message: 'CineShelf has been updated!'
-                      });
-                  });
-              });
-          })
+        }).then(() => {
+            console.log('CineShelf: ✅ All old caches deleted, claiming clients');
+            return self.clients.claim(); // Take control immediately
+        }).then(() => {
+            return self.clients.matchAll().then(clients => {
+                clients.forEach(client => {
+                    client.postMessage({
+                        type: 'SW_UPDATED',
+                        version: CACHE_VERSION,
+                        message: 'CineShelf has been updated! Please refresh.'
+                    });
+                });
+            });
+        })
     );
 });
 
-// Fetch event - skip caching for .css and .js
+// Fetch event - ALWAYS fetch fresh CSS/JS
 self.addEventListener('fetch', event => {
     const requestURL = new URL(event.request.url);
 
+    // Skip non-GET requests
     if (event.request.method !== 'GET') return;
 
+    // NEVER cache backup/restore PHP
     if (requestURL.pathname.includes('backup.php') || 
         requestURL.pathname.includes('restore.php')) {
         event.respondWith(fetch(event.request));
@@ -82,22 +89,28 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // Always bypass cache for CSS/JS
+    // ⚡ ALWAYS fetch fresh CSS/JS files - NEVER serve from cache first
     if (requestURL.pathname.endsWith('.css') || requestURL.pathname.endsWith('.js')) {
         event.respondWith(
-            fetch(event.request)
+            fetch(event.request, {
+                cache: 'no-store' // Force network fetch, bypass HTTP cache
+            })
                 .then(response => {
-                    // Optionally cache updated version
+                    // Cache the new version for offline fallback only
                     const clone = response.clone();
                     caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
                     return response;
                 })
-                .catch(() => caches.match(event.request)) // fallback if offline
+                .catch(() => {
+                    // Only use cache as last resort (offline)
+                    console.log('CineShelf: Network failed, using cached version of', requestURL.pathname);
+                    return caches.match(event.request);
+                })
         );
         return;
     }
 
-    // Default: cache first, then network
+    // Default: cache first for HTML and images
     event.respondWith(
         caches.match(event.request)
             .then(response => {
@@ -115,18 +128,21 @@ self.addEventListener('fetch', event => {
     );
 });
 
-// Message event listener
+// Message event listener for manual cache control
 self.addEventListener('message', event => {
     if (event.data?.type === 'SKIP_WAITING') {
+        console.log('CineShelf: Received SKIP_WAITING, activating immediately');
         self.skipWaiting();
     }
+    
     if (event.data?.type === 'FORCE_REFRESH') {
+        console.log('CineShelf: Received FORCE_REFRESH, deleting ALL caches');
         event.waitUntil(
             caches.keys().then(cacheNames => {
                 return Promise.all(
                     cacheNames.map(cacheName => {
                         if (cacheName.startsWith('cineshelf-')) {
-                            console.log('CineShelf: Force clearing cache:', cacheName);
+                            console.log('CineShelf: 🗑️ Force clearing cache:', cacheName);
                             return caches.delete(cacheName);
                         }
                     })
@@ -168,4 +184,4 @@ self.addEventListener('push', event => {
     }
 });
 
-console.log(`CineShelf Service Worker ${CACHE_VERSION} loaded`);
+console.log(`🚀 CineShelf Service Worker ${CACHE_VERSION} loaded and ready`);
