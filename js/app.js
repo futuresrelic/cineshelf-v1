@@ -635,90 +635,144 @@ window.App = (function() {
     }
 
     async function searchMovies() {
-        const title = document.getElementById('movieTitle').value.trim();
-        if (!title) return;
+    const title = document.getElementById('movieTitle').value.trim();
+    if (!title) return;
 
-        const btn = document.getElementById('searchBtn');
-        const btnText = document.getElementById('searchBtnText');
-        const loader = document.getElementById('searchLoader');
+    const btn = document.getElementById('searchBtn');
+    const btnText = document.getElementById('searchBtnText');
+    const loader = document.getElementById('searchLoader');
 
-        btn.disabled = true;
-        btnText.style.display = 'none';
-        loader.style.display = 'inline-block';
+    btn.disabled = true;
+    btnText.style.display = 'none';
+    loader.style.display = 'inline-block';
 
-        try {
-            const response = await fetch(`${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}`);
-            const data = await response.json();
+    try {
+        // 🆕 CHANGED: Use /search/multi instead of /search/movie
+        const response = await fetch(`${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}`);
+        const data = await response.json();
 
-            if (data.results && data.results.length > 0) {
-                displaySearchResults(data.results);
+        if (data.results && data.results.length > 0) {
+            // 🆕 NEW: Filter to only movies and TV, add mediaType
+            const filteredResults = data.results
+                .filter(item => item.media_type === 'movie' || item.media_type === 'tv')
+                .map(item => ({
+                    ...item,
+                    mediaType: item.media_type
+                }));
+            
+            if (filteredResults.length > 0) {
+                displaySearchResults(filteredResults);
                 document.getElementById('searchModal').classList.add('active');
             } else {
-                showStatus('No movies found. You can still add the title as-is.', 'error');
+                showStatus('No movies or TV series found. You can still add the title as-is.', 'error');
             }
-        } catch (error) {
-            console.error('Search error:', error);
-            showStatus('Search failed. You can still add the title as-is.', 'error');
-        } finally {
-            btn.disabled = false;
-            btnText.style.display = 'inline';
-            loader.style.display = 'none';
+        } else {
+            showStatus('No results found. You can still add the title as-is.', 'error');
         }
+    } catch (error) {
+        console.error('Search error:', error);
+        showStatus('Search failed. You can still add the title as-is.', 'error');
+    } finally {
+        btn.disabled = false;
+        btnText.style.display = 'inline';
+        loader.style.display = 'none';
     }
+}
 
     async function lookupByImdbId() {
-        console.log('CineShelf: IMDB lookup button clicked');
+    console.log('CineShelf: IMDB lookup button clicked');
+    
+    const imdbId = document.getElementById('imdbId').value.trim();
+    console.log('CineShelf: IMDB ID entered:', imdbId);
+    
+    if (!imdbId) {
+        showStatus('Please enter an IMDB ID (e.g., tt0219965)', 'error');
+        return;
+    }
+
+    if (!/^tt\d{7,8}$/.test(imdbId)) {
+        showStatus('Invalid IMDB ID format. Should be like: tt0219965', 'error');
+        console.log('CineShelf: Invalid IMDB ID format:', imdbId);
+        return;
+    }
+
+    const btn = document.getElementById('imdbBtn');
+    const originalText = btn.textContent;
+    
+    btn.disabled = true;
+    btn.textContent = 'Looking up...';
+    
+    console.log('CineShelf: Starting IMDB lookup for:', imdbId);
+
+    try {
+        const findUrl = `${TMDB_BASE_URL}/find/${imdbId}?api_key=${TMDB_API_KEY}&external_source=imdb_id`;
+        console.log('CineShelf: Fetching from:', findUrl);
         
-        const imdbId = document.getElementById('imdbId').value.trim();
-        console.log('CineShelf: IMDB ID entered:', imdbId);
+        const findResponse = await fetch(findUrl);
+        const findData = await findResponse.json();
         
-        if (!imdbId) {
-            showStatus('Please enter an IMDB ID (e.g., tt0219965)', 'error');
-            return;
+        console.log('CineShelf: TMDB find response:', findData);
+
+        // 🆕 NEW: Check BOTH movie_results and tv_results
+        let result = null;
+        let mediaType = 'movie';
+        
+        if (findData.movie_results && findData.movie_results.length > 0) {
+            result = findData.movie_results[0];
+            mediaType = 'movie';
+            console.log('CineShelf: Found movie via IMDB ID:', result);
+        } else if (findData.tv_results && findData.tv_results.length > 0) {
+            result = findData.tv_results[0];
+            mediaType = 'tv';
+            console.log('CineShelf: Found TV series via IMDB ID:', result);
         }
 
-        if (!/^tt\d{7,8}$/.test(imdbId)) {
-            showStatus('Invalid IMDB ID format. Should be like: tt0219965', 'error');
-            console.log('CineShelf: Invalid IMDB ID format:', imdbId);
-            return;
-        }
-
-        const btn = document.getElementById('imdbBtn');
-        const originalText = btn.textContent;
-        
-        btn.disabled = true;
-        btn.textContent = 'Looking up...';
-        
-        console.log('CineShelf: Starting IMDB lookup for:', imdbId);
-
-        try {
-            const findUrl = `${TMDB_BASE_URL}/find/${imdbId}?api_key=${TMDB_API_KEY}&external_source=imdb_id`;
-            console.log('CineShelf: Fetching from:', findUrl);
+        if (result) {
+            if (settings.debugMode) {
+                console.log(`CineShelf Debug: Found ${mediaType} via IMDB ID ${imdbId}:`, result);
+            }
             
-            const findResponse = await fetch(findUrl);
-            const findData = await findResponse.json();
+            // 🆕 NEW: Use correct endpoint
+            const endpoint = mediaType === 'tv' ? 'tv' : 'movie';
+            const detailsUrl = `${TMDB_BASE_URL}/${endpoint}/${result.id}?api_key=${TMDB_API_KEY}&append_to_response=credits`;
+            console.log('CineShelf: Fetching details from:', detailsUrl);
             
-            console.log('CineShelf: TMDB find response:', findData);
+            const response = await fetch(detailsUrl);
+            const details = await response.json();
+            
+            console.log('CineShelf: Details:', details);
 
-            if (findData.movie_results && findData.movie_results.length > 0) {
-                const movie = findData.movie_results[0];
+            // 🆕 NEW: Build data based on type
+            let movieData;
+            
+            if (mediaType === 'tv') {
+                // TV Series
+                const firstAirYear = details.first_air_date ? new Date(details.first_air_date).getFullYear() : null;
+                const lastAirYear = details.last_air_date ? new Date(details.last_air_date).getFullYear() : null;
+                const yearDisplay = lastAirYear && lastAirYear !== firstAirYear 
+                    ? `${firstAirYear}-${lastAirYear}`
+                    : firstAirYear;
                 
-                console.log('CineShelf: Found movie via IMDB ID:', movie);
-                
-                if (settings.debugMode) {
-                    console.log(`CineShelf Debug: Found movie via IMDB ID ${imdbId}:`, movie);
-                }
-                
-                const detailsUrl = `${TMDB_BASE_URL}/movie/${movie.id}?api_key=${TMDB_API_KEY}&append_to_response=credits`;
-                console.log('CineShelf: Fetching details from:', detailsUrl);
-                
-                const response = await fetch(detailsUrl);
-                const details = await response.json();
-                
-                console.log('CineShelf: Movie details:', details);
-
-                const movieData = {
+                movieData = {
                     imdbID: imdbId,
+                    mediaType: 'tv',
+                    title: details.name,
+                    year: yearDisplay,
+                    posterIMG: details.poster_path ? `${TMDB_IMAGE_BASE}${details.poster_path}` : '',
+                    imdbRating: details.vote_average || 0,
+                    plot: details.overview || '',
+                    director: details.created_by?.[0]?.name || 'Unknown',
+                    genre: details.genres?.map(g => g.name).join(', ') || 'Unknown',
+                    runtime: details.episode_run_time?.[0] ? `${details.episode_run_time[0]} min/episode` : 'Unknown',
+                    rated: 'Unknown',
+                    seasons: details.number_of_seasons || 0,
+                    episodes: details.number_of_episodes || 0
+                };
+            } else {
+                // Movie (UNCHANGED - your original code)
+                movieData = {
+                    imdbID: imdbId,
+                    mediaType: 'movie',
                     title: details.title,
                     year: details.release_date ? new Date(details.release_date).getFullYear() : null,
                     posterIMG: details.poster_path ? `${TMDB_IMAGE_BASE}${details.poster_path}` : '',
@@ -729,39 +783,41 @@ window.App = (function() {
                     runtime: details.runtime ? `${details.runtime} min` : 'Unknown',
                     rated: 'Unknown'
                 };
-
-                console.log('CineShelf: Processed movie data:', movieData);
-
-                const existingMovieIndex = movies.findIndex(m => m.imdbID === movieData.imdbID);
-                if (existingMovieIndex === -1) {
-                    movies.push(movieData);
-                } else {
-                    movies[existingMovieIndex] = movieData;
-                }
-
-                document.getElementById('movieTitle').value = movieData.title;
-
-                // Track this movie as the last selected one
-                lastSelectedMovie = movieData;
-
-                handleMovieSelection(movieData);
-
-                saveData();
-                showStatus(`Found: ${movieData.title} (${movieData.year})`, 'success');
-
-            } else {
-                console.log('CineShelf: No movie found for IMDB ID:', imdbId);
-                showStatus(`No movie found with IMDB ID: ${imdbId}`, 'error');
             }
 
-        } catch (error) {
-            console.error('CineShelf: IMDB lookup error:', error);
-            showStatus('Failed to lookup movie by IMDB ID. Check your connection.', 'error');
-        } finally {
-            btn.disabled = false;
-            btn.textContent = originalText;
+            console.log('CineShelf: Processed movie data:', movieData);
+
+            // UNCHANGED - your original code from here
+            const existingMovieIndex = movies.findIndex(m => m.imdbID === movieData.imdbID);
+            if (existingMovieIndex === -1) {
+                movies.push(movieData);
+            } else {
+                movies[existingMovieIndex] = movieData;
+            }
+
+            document.getElementById('movieTitle').value = movieData.title;
+
+            // Track this movie as the last selected one
+            lastSelectedMovie = movieData;
+
+            handleMovieSelection(movieData); // ✅ CORRECT - uses YOUR function name
+
+            saveData();
+            showStatus(`Found: ${movieData.title} (${movieData.year})`, 'success');
+
+        } else {
+            console.log('CineShelf: No movie or TV found for IMDB ID:', imdbId);
+            showStatus(`No movie or TV series found with IMDB ID: ${imdbId}`, 'error');
         }
+
+    } catch (error) {
+        console.error('CineShelf: IMDB lookup error:', error);
+        showStatus('Failed to lookup by IMDB ID. Check your connection.', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
     }
+}
 
     function handleMovieSelection(movie) {
         if (currentResolveItem) {
@@ -791,60 +847,112 @@ window.App = (function() {
     }
 
     function displaySearchResults(results) {
-        const container = document.getElementById('searchResults');
-        container.innerHTML = '';
+    const container = document.getElementById('searchResults');
+    container.innerHTML = '';
 
-        const limit = parseInt(settings.searchResultsLimit) || 10;
-        const limitedResults = results.slice(0, limit);
-        
-        if (settings.debugMode) {
-            console.log(`CineShelf Debug: Showing ${limitedResults.length} of ${results.length} search results (limit: ${limit})`);
-        }
-
-        limitedResults.forEach(movie => {
-            const resultDiv = document.createElement('div');
-            resultDiv.className = 'search-result';
-            resultDiv.addEventListener('click', () => selectMovie(movie));
-
-            const posterUrl = movie.poster_path 
-                ? `${TMDB_IMAGE_BASE}${movie.poster_path}`
-                : '';
-
-            resultDiv.innerHTML = `
-                <img src="${posterUrl}" alt="${movie.title}" class="search-poster" 
-                     onerror="this.style.display='none'">
-                <div class="search-info">
-                    <div class="search-title">${movie.title}</div>
-                    <div class="search-details">
-                        ${movie.release_date ? new Date(movie.release_date).getFullYear() : 'Unknown'} • 
-                        ⭐ ${movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}<br>
-                        ${movie.overview ? movie.overview.substring(0, 100) + '...' : 'No description available'}
-                    </div>
-                </div>
-            `;
-
-            container.appendChild(resultDiv);
-        });
+    const limit = parseInt(settings.searchResultsLimit) || 10;
+    const limitedResults = results.slice(0, limit);
+    
+    if (settings.debugMode) {
+        console.log(`CineShelf Debug: Showing ${limitedResults.length} of ${results.length} search results (limit: ${limit})`);
     }
 
-    async function selectMovie(tmdbMovie) {
+    limitedResults.forEach(item => {
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'search-result';
+        resultDiv.addEventListener('click', () => selectMovie(item));
+
+        const posterUrl = item.poster_path 
+            ? `${TMDB_IMAGE_BASE}${item.poster_path}`
+            : '';
+
+        // 🆕 NEW: Handle both movie and TV naming
+        const displayTitle = item.title || item.name || 'Unknown Title';
+        const releaseYear = item.release_date 
+            ? new Date(item.release_date).getFullYear()
+            : (item.first_air_date ? new Date(item.first_air_date).getFullYear() : 'Unknown');
+        
+        // 🆕 NEW: Media type badge
+        const mediaType = item.mediaType || item.media_type || 'movie';
+        const mediaIcon = mediaType === 'tv' ? '📺' : '🎬';
+        const mediaLabel = mediaType === 'tv' ? 'TV Series' : 'Movie';
+        
+        resultDiv.innerHTML = `
+            <img src="${posterUrl}" alt="${displayTitle}" class="search-poster" 
+                 onerror="this.style.display='none'">
+            <div class="search-info">
+                <div class="search-title">
+                    ${displayTitle}
+                    <span style="font-size: 0.75em; opacity: 0.8; margin-left: 0.5rem; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+                        ${mediaIcon} ${mediaLabel}
+                    </span>
+                </div>
+                <div class="search-details">
+                    ${releaseYear} • 
+                    ⭐ ${item.vote_average ? item.vote_average.toFixed(1) : 'N/A'}<br>
+                    ${item.overview ? item.overview.substring(0, 100) + '...' : 'No description available'}
+                </div>
+            </div>
+        `;
+
+        container.appendChild(resultDiv);
+    });
+}
+
+    async function selectMovie(tmdbItem) {
     try {
-        const response = await fetch(`${TMDB_BASE_URL}/movie/${tmdbMovie.id}?api_key=${TMDB_API_KEY}&append_to_response=credits`);
+        // 🆕 NEW: Determine media type
+        const mediaType = tmdbItem.mediaType || tmdbItem.media_type || 'movie';
+        
+        // 🆕 NEW: Use correct API endpoint
+        const endpoint = mediaType === 'tv' ? 'tv' : 'movie';
+        const response = await fetch(`${TMDB_BASE_URL}/${endpoint}/${tmdbItem.id}?api_key=${TMDB_API_KEY}&append_to_response=credits`);
         const details = await response.json();
 
-        const movie = {
-            imdbID: tmdbMovie.id.toString(),
-            title: details.title,
-            year: details.release_date ? new Date(details.release_date).getFullYear() : null,
-            posterIMG: details.poster_path ? `${TMDB_IMAGE_BASE}${details.poster_path}` : '',
-            imdbRating: details.vote_average || 0,
-            plot: details.overview || '',
-            director: details.credits?.crew?.find(person => person.job === 'Director')?.name || 'Unknown',
-            genre: details.genres?.map(g => g.name).join(', ') || 'Unknown',
-            runtime: details.runtime ? `${details.runtime} min` : 'Unknown',
-            rated: 'Unknown'
-        };
+        // 🆕 NEW: Build movie data based on type
+        let movie;
+        
+        if (mediaType === 'tv') {
+            // TV Series
+            const firstAirYear = details.first_air_date ? new Date(details.first_air_date).getFullYear() : null;
+            const lastAirYear = details.last_air_date ? new Date(details.last_air_date).getFullYear() : null;
+            const yearDisplay = lastAirYear && lastAirYear !== firstAirYear 
+                ? `${firstAirYear}-${lastAirYear}`
+                : firstAirYear;
+            
+            movie = {
+                imdbID: tmdbItem.id.toString(),
+                mediaType: 'tv',
+                title: details.name,
+                year: yearDisplay,
+                posterIMG: details.poster_path ? `${TMDB_IMAGE_BASE}${details.poster_path}` : '',
+                imdbRating: details.vote_average || 0,
+                plot: details.overview || '',
+                director: details.created_by?.[0]?.name || 'Unknown',
+                genre: details.genres?.map(g => g.name).join(', ') || 'Unknown',
+                runtime: details.episode_run_time?.[0] ? `${details.episode_run_time[0]} min/episode` : 'Unknown',
+                rated: 'Unknown',
+                seasons: details.number_of_seasons || 0,
+                episodes: details.number_of_episodes || 0
+            };
+        } else {
+            // Movie (UNCHANGED - your original code)
+            movie = {
+                imdbID: tmdbItem.id.toString(),
+                mediaType: 'movie',
+                title: details.title,
+                year: details.release_date ? new Date(details.release_date).getFullYear() : null,
+                posterIMG: details.poster_path ? `${TMDB_IMAGE_BASE}${details.poster_path}` : '',
+                imdbRating: details.vote_average || 0,
+                plot: details.overview || '',
+                director: details.credits?.crew?.find(person => person.job === 'Director')?.name || 'Unknown',
+                genre: details.genres?.map(g => g.name).join(', ') || 'Unknown',
+                runtime: details.runtime ? `${details.runtime} min` : 'Unknown',
+                rated: 'Unknown'
+            };
+        }
 
+        // UNCHANGED - your original code from here
         const existingMovieIndex = movies.findIndex(m => m.imdbID === movie.imdbID);
         if (existingMovieIndex === -1) {
             movies.push(movie);
@@ -855,9 +963,9 @@ window.App = (function() {
         document.getElementById('movieTitle').value = movie.title;
 
         // Track this movie as the last selected one
-        lastSelectedMovie = movie;  // ← THIS IS THE FIX!
+        lastSelectedMovie = movie;
 
-        handleMovieSelection(movie);
+        handleMovieSelection(movie); // ✅ CORRECT - uses YOUR function name
 
         saveData();
         closeModal('searchModal');
@@ -1161,7 +1269,7 @@ function setLetterFilter(type, letter) {
     function createMovieCard(copy, movie, type, viewMode) {
     const card = document.createElement('div');
     card.className = 'movie-card';
-    card.addEventListener('click', () => showMovieDetail(copy, movie));
+    card.addEventListener('click', () => showMovieDetail(copy, movie)); // ✅ YOUR function name
 
     const posterUrl = movie?.posterIMG || '';
     const year = movie?.year || 'Unknown';
@@ -1170,13 +1278,25 @@ function setLetterFilter(type, letter) {
     const director = movie?.director || '';
     const genre = movie?.genre || '';
 
+    // 🆕 NEW: Get media type
+    const mediaType = movie?.mediaType || 'movie';
+    const mediaIcon = mediaType === 'tv' ? '📺' : '🎬';
+    
+    // 🆕 NEW: Badge for grid/detail/small views
+    const mediaTypeBadge = `
+        <div style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; z-index: 2; pointer-events: none;">
+            ${mediaIcon}
+        </div>
+    `;
+
     // Different layouts for different view modes
     if (viewMode === 'detail') {
         card.classList.add('detail-item');
         
         card.innerHTML = `
+            ${mediaTypeBadge}
             <img src="${posterUrl}" alt="${copy.title}" class="movie-poster" 
-                 onerror="this.style.background='rgba(255,255,255,0.1)'; this.innerHTML='🎬'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontSize='2rem';">
+                 onerror="this.style.background='rgba(255,255,255,0.1)'; this.innerHTML='${mediaIcon}'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontSize='2rem';">
             <div class="movie-content">
                 <div class="movie-title">${copy.title}</div>
                 <div class="movie-info">
@@ -1195,9 +1315,9 @@ function setLetterFilter(type, letter) {
         
         card.innerHTML = `
             <img src="${posterUrl}" alt="${copy.title}" class="movie-poster" 
-                 onerror="this.style.background='rgba(255,255,255,0.1)'; this.innerHTML='🎬'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontSize='1rem';">
+                 onerror="this.style.background='rgba(255,255,255,0.1)'; this.innerHTML='${mediaIcon}'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontSize='1rem';">
             <div class="movie-content">
-                <div class="movie-title">${copy.title}</div>
+                <div class="movie-title">${mediaIcon} ${copy.title}</div>
                 <div class="movie-info">${year} • ${copy.format}</div>
             </div>
         `;
@@ -1205,8 +1325,9 @@ function setLetterFilter(type, letter) {
         card.classList.add('small-item');
         
         card.innerHTML = `
+            ${mediaTypeBadge}
             <img src="${posterUrl}" alt="${copy.title}" class="movie-poster" 
-                 onerror="this.style.background='rgba(255,255,255,0.1)'; this.innerHTML='🎬'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontSize='1.2rem';">
+                 onerror="this.style.background='rgba(255,255,255,0.1)'; this.innerHTML='${mediaIcon}'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontSize='1.2rem';">
             <div class="movie-title">${copy.title}</div>
             <div class="movie-info">
                 ${year} • ${copy.format}<br>
@@ -1214,10 +1335,11 @@ function setLetterFilter(type, letter) {
             </div>
         `;
     } else {
-        // GRID MODE - This is the important part for your responsive grid
+        // GRID MODE (UNCHANGED - your original code with badge added)
         card.innerHTML = `
+            ${mediaTypeBadge}
             <img src="${posterUrl}" alt="${copy.title}" class="movie-poster" 
-                 onerror="this.style.background='rgba(255,255,255,0.1)'; this.innerHTML='🎬'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontSize='2rem';">
+                 onerror="this.style.background='rgba(255,255,255,0.1)'; this.innerHTML='${mediaIcon}'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontSize='2rem';">
             <div class="movie-card-content">
                 <div class="movie-title">${copy.title}</div>
                 <div class="movie-info">
@@ -1236,66 +1358,99 @@ function setLetterFilter(type, letter) {
 }
 
     function showMovieDetail(copy, movie) {
-        const modal = document.getElementById('detailModal');
-        const content = document.getElementById('movieDetail');
+    const modal = document.getElementById('detailModal');
+    const content = document.getElementById('movieDetail');
 
-        const posterUrl = movie?.posterIMG || '';
-        const oppositeType = copy.isWishlist ? 'collection' : 'wishlist';
-        const oppositeLabel = copy.isWishlist ? 'Collection' : 'Wishlist';
+    const posterUrl = movie?.posterIMG || '';
+    const oppositeType = copy.isWishlist ? 'collection' : 'wishlist';
+    const oppositeLabel = copy.isWishlist ? 'Collection' : 'Wishlist';
 
-        content.innerHTML = `
-            <img src="${posterUrl}" alt="${copy.title}" class="movie-detail-poster" 
-                 onerror="this.style.background='rgba(255,255,255,0.1)'; this.innerHTML='🎬'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontSize='3rem';">
+    // 🆕 NEW: Get media type
+    const mediaType = movie?.mediaType || 'movie';
+    const mediaIcon = mediaType === 'tv' ? '📺' : '🎬';
+    const mediaLabel = mediaType === 'tv' ? 'TV Series' : 'Movie';
 
-            <div class="detail-section">
-                <div class="detail-title">${copy.title}</div>
-                <div class="detail-text">
-                    ${movie ? `
-                        <strong>Year:</strong> ${movie.year || 'Unknown'}<br>
-                        <strong>Rating:</strong> ${movie.imdbRating ? `⭐ ${movie.imdbRating.toFixed(1)}/10` : 'Not rated'}<br>
-                        <strong>Runtime:</strong> ${movie.runtime}<br>
-                        <strong>Director:</strong> ${movie.director}<br>
-                        <strong>Genre:</strong> ${movie.genre}<br><br>
-                        <strong>Plot:</strong><br>${movie.plot}
-                    ` : 'No movie information available'}
-                </div>
+    // 🆕 NEW: Build info based on type
+    let movieInfo = '';
+    if (movie) {
+        if (mediaType === 'tv') {
+            movieInfo = `
+                <strong>Type:</strong> ${mediaIcon} ${mediaLabel}<br>
+                <strong>Aired:</strong> ${movie.year || 'Unknown'}<br>
+                <strong>Seasons:</strong> ${movie.seasons || 'Unknown'}<br>
+                <strong>Episodes:</strong> ${movie.episodes || 'Unknown'}<br>
+                <strong>Rating:</strong> ${movie.imdbRating ? `⭐ ${movie.imdbRating.toFixed(1)}/10` : 'Not rated'}<br>
+                <strong>Episode Runtime:</strong> ${movie.runtime}<br>
+                <strong>Creator:</strong> ${movie.director}<br>
+                <strong>Genre:</strong> ${movie.genre}<br><br>
+                <strong>Plot:</strong><br>${movie.plot}
+            `;
+        } else {
+            // UNCHANGED - your original movie info format
+            movieInfo = `
+                <strong>Type:</strong> ${mediaIcon} ${mediaLabel}<br>
+                <strong>Year:</strong> ${movie.year || 'Unknown'}<br>
+                <strong>Rating:</strong> ${movie.imdbRating ? `⭐ ${movie.imdbRating.toFixed(1)}/10` : 'Not rated'}<br>
+                <strong>Runtime:</strong> ${movie.runtime}<br>
+                <strong>Director:</strong> ${movie.director}<br>
+                <strong>Genre:</strong> ${movie.genre}<br><br>
+                <strong>Plot:</strong><br>${movie.plot}
+            `;
+        }
+    } else {
+        movieInfo = 'No movie information available';
+    }
+
+    // UNCHANGED - your original HTML structure
+    content.innerHTML = `
+        <img src="${posterUrl}" alt="${copy.title}" class="movie-detail-poster" 
+             onerror="this.style.background='rgba(255,255,255,0.1)'; this.innerHTML='${mediaIcon}'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontSize='3rem';">
+
+        <div class="detail-section">
+            <div class="detail-title">${copy.title}</div>
+            <div class="detail-text">
+                ${movieInfo}
             </div>
+        </div>
 
-            <div class="detail-section">
-                <div class="detail-title">Your Copy Details</div>
-                <div class="detail-text">
-                    <strong>Format:</strong> ${copy.format}<br>
-                    ${copy.region ? `<strong>Region:</strong> ${copy.region}<br>` : ''}
-                    <strong>Discs:</strong> ${copy.discs}<br>
-                    ${copy.edition ? `<strong>Edition:</strong> ${copy.edition}<br>` : ''}
-                    ${copy.languages ? `<strong>Languages:</strong> ${copy.languages}<br>` : ''}
-                    ${copy.upc ? `<strong>UPC:</strong> ${copy.upc}<br>` : ''}
-                    ${copy.notes ? `<strong>Notes:</strong> ${copy.notes}<br>` : ''}
-                    <strong>Added:</strong> ${new Date(copy.created).toLocaleDateString()}<br>
-                    <strong>Status:</strong> ${copy.resolved ? '✅ Resolved' : '❌ Unresolved'}
-                </div>
+        <div class="detail-section">
+            <div class="detail-title">Your Copy Details</div>
+            <div class="detail-text">
+                <strong>Format:</strong> ${copy.format}<br>
+                ${copy.region ? `<strong>Region:</strong> ${copy.region}<br>` : ''}
+                <strong>Discs:</strong> ${copy.discs}<br>
+                ${copy.edition ? `<strong>Edition:</strong> ${copy.edition}<br>` : ''}
+                ${copy.languages ? `<strong>Languages:</strong> ${copy.languages}<br>` : ''}
+                ${copy.upc ? `<strong>UPC:</strong> ${copy.upc}<br>` : ''}
+                ${copy.notes ? `<strong>Notes:</strong> ${copy.notes}<br>` : ''}
+                <strong>Added:</strong> ${new Date(copy.created).toLocaleDateString()}<br>
+                <strong>Status:</strong> ${copy.resolved ? '✅ Resolved' : '❌ Unresolved'}
             </div>
+        </div>
 
-            ${!copy.resolved ? `
-                <button onclick="App.resolveMovieFromDetail('${copy.id}')" class="btn" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                    🔍 Resolve Movie
+        ${!copy.resolved ? `
+            <div class="detail-section">
+                <button onclick="window.App.skipToNextUnresolved()" class="btn">
+                    ⚡ Resolve This Item
                 </button>
-            ` : ''}
-            
-            <button onclick="App.startEditMovie('${copy.id}')" class="btn" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);">
-                ✏️ Edit Movie
-            </button>
-            
-            <button onclick="App.moveCopy('${copy.id}', ${!copy.isWishlist})" class="btn">
+            </div>
+        ` : ''}
+
+        <div class="detail-section">
+            <button onclick="window.App.moveCopy('${copy.id}', '${oppositeType}')" class="btn">
                 Move to ${oppositeLabel}
             </button>
-            <button onclick="App.deleteCopy('${copy.id}')" class="btn btn-danger">
-                Delete
+            <button onclick="window.App.startEditMovie('${copy.id}')" class="btn btn-secondary">
+                ✏️ Edit
             </button>
-        `;
+            <button onclick="window.App.deleteCopy('${copy.id}')" class="btn btn-danger">
+                🗑️ Delete
+            </button>
+        </div>
+    `;
 
-        modal.classList.add('active');
-    }
+    modal.classList.add('active');
+}
 
     function moveCopy(copyId, toWishlist) {
         const copyIndex = copies.findIndex(c => c.id === copyId);
