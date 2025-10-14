@@ -1365,12 +1365,12 @@ function setLetterFilter(type, letter) {
     const oppositeType = copy.isWishlist ? 'collection' : 'wishlist';
     const oppositeLabel = copy.isWishlist ? 'Collection' : 'Wishlist';
 
-    // 🆕 NEW: Get media type
+    // Get media type
     const mediaType = movie?.mediaType || 'movie';
     const mediaIcon = mediaType === 'tv' ? '📺' : '🎬';
     const mediaLabel = mediaType === 'tv' ? 'TV Series' : 'Movie';
 
-    // 🆕 NEW: Build info based on type
+    // Build info based on type
     let movieInfo = '';
     if (movie) {
         if (mediaType === 'tv') {
@@ -1386,7 +1386,6 @@ function setLetterFilter(type, letter) {
                 <strong>Plot:</strong><br>${movie.plot}
             `;
         } else {
-            // UNCHANGED - your original movie info format
             movieInfo = `
                 <strong>Type:</strong> ${mediaIcon} ${mediaLabel}<br>
                 <strong>Year:</strong> ${movie.year || 'Unknown'}<br>
@@ -1401,7 +1400,6 @@ function setLetterFilter(type, letter) {
         movieInfo = 'No movie information available';
     }
 
-    // UNCHANGED - your original HTML structure
     content.innerHTML = `
         <img src="${posterUrl}" alt="${copy.title}" class="movie-detail-poster" 
              onerror="this.style.background='rgba(255,255,255,0.1)'; this.innerHTML='${mediaIcon}'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontSize='3rem';">
@@ -1430,7 +1428,7 @@ function setLetterFilter(type, letter) {
 
         ${!copy.resolved ? `
             <div class="detail-section">
-                <button onclick="window.App.skipToNextUnresolved()" class="btn">
+                <button onclick="window.App.findMovieData('${copy.id}')" class="btn">
                     ⚡ Resolve This Item
                 </button>
             </div>

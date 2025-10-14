@@ -2928,7 +2928,7 @@
         },
         {
             "id": "1756998152947205",
-            "title": "House of Cards Trilogy (BBC),,,,,,,,,,,,,,\r",
+            "title": "House of Cards",
             "format": "",
             "region": "",
             "discs": 1,
@@ -2937,8 +2937,8 @@
             "upc": "",
             "notes": "",
             "isWishlist": false,
-            "movieId": null,
-            "resolved": false,
+            "movieId": "21720",
+            "resolved": true,
             "created": "2025-09-04T15:02:32.947Z"
         },
         {
@@ -10457,14 +10457,29 @@
             "genre": "Animation, Comedy, Family, Adventure, Fantasy",
             "runtime": "86 min",
             "rated": "Unknown"
+        },
+        {
+            "imdbID": "21720",
+            "mediaType": "tv",
+            "title": "House of Cards",
+            "year": 1990,
+            "posterIMG": "https:\/\/image.tmdb.org\/t\/p\/w500\/tUc1F8jq1QlaQlSqq5Q7onIOvZn.jpg",
+            "imdbRating": 8.073,
+            "plot": "Frustrated at a new moderate Conservative government and deprived of a promotion to a senior position, chief whip Francis Urquhart prepares a meticulous plot to bring down the Prime Minister then to take his place.",
+            "director": "Andrew Davies",
+            "genre": "War & Politics, Comedy, Drama",
+            "runtime": "55 min\/episode",
+            "rated": "Unknown",
+            "seasons": 1,
+            "episodes": 4
         }
     ],
     "customEditions": [],
-    "timestamp": "2025-10-14T16:15:03.215Z",
+    "timestamp": "2025-10-14T17:26:45.732Z",
     "_backup_metadata": {
         "user": "default",
-        "timestamp": "2025-10-14T09:15:04-07:00",
-        "server_time": "2025-10-14 09:15:04",
+        "timestamp": "2025-10-14T10:26:48-07:00",
+        "server_time": "2025-10-14 10:26:48",
         "version": "3.0-unified",
         "filename": "cineshelf_backup_default.json"
     }
