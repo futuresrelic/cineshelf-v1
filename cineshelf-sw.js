@@ -1,5 +1,5 @@
 // CineShelf Service Worker - FORCE UPDATE VERSION
-const CACHE_VERSION = 'v1.7.5.10'; // ⬆️ BUMPED VERSION TO FORCE UPDATE
+const CACHE_VERSION = 'v1.7.5.15'; // ⬆️ BUMPED VERSION TO FORCE UPDATE
 const CACHE_NAME = `cineshelf-${CACHE_VERSION}`;
 const DATA_CACHE_NAME = `cineshelf-data-${CACHE_VERSION}`;
 
