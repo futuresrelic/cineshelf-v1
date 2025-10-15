@@ -604,6 +604,11 @@ window.App = (function() {
             updateSettingsUI();
             displayCustomEditions();
         }, 50);
+    } else if (tabName === 'design') {
+        // ✅ Design tab initialization
+        if (typeof CSSDesigner !== 'undefined') {
+            setTimeout(() => CSSDesigner.init(), 50);
+        }
     } else if (tabName === 'scan') {
         updateResolveNextSection();
         updateEditSection();
@@ -1539,26 +1544,30 @@ function setLetterFilter(type, letter) {
     }
 
     function findMovieData(copyId) {
-        const copy = copies.find(c => c.id === copyId);
-        if (!copy) return;
+    const copy = copies.find(c => c.id === copyId);
+    if (!copy) return;
 
-        currentResolveItem = copy;
-        lastSelectedMovie = null; // Clear last selected movie
-        
-        document.getElementById('movieTitle').value = copy.title;
-        document.getElementById('format').value = copy.format;
-        document.getElementById('region').value = copy.region;
-        document.getElementById('discs').value = copy.discs;
-        document.getElementById('edition').value = copy.edition;
-        document.getElementById('languages').value = copy.languages;
-        document.getElementById('upc').value = copy.upc;
-        document.getElementById('notes').value = copy.notes;
+    currentResolveItem = copy;
+    lastSelectedMovie = null; // Clear last selected movie
+    
+    document.getElementById('movieTitle').value = copy.title;
+    document.getElementById('format').value = copy.format;
+    document.getElementById('region').value = copy.region;
+    document.getElementById('discs').value = copy.discs;
+    document.getElementById('edition').value = copy.edition;
+    document.getElementById('languages').value = copy.languages;
+    document.getElementById('upc').value = copy.upc;
+    document.getElementById('notes').value = copy.notes;
 
-        updateResolveNextSection();
-        switchTab('scan');
-        
-        showStatus(`Ready to search for "${copy.title}" - click Search Movie Database`, 'success');
-    }
+    updateResolveNextSection();
+    
+    // 🆕 NEW: Close the detail modal BEFORE switching tabs
+    closeModal('detailModal');
+    
+    switchTab('scan');
+    
+    showStatus(`Ready to search for "${copy.title}" - click Search Movie Database`, 'success');
+}
 
     function updateResolveNextSection() {
         const section = document.getElementById('resolveNextSection');

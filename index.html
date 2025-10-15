@@ -42,6 +42,7 @@
             <button class="tab admin-only" onclick="switchTab('resolve')">Resolve</button>
             <button class="tab admin-only" onclick="switchTab('data')">Data</button>
             <button class="tab admin-only" onclick="switchTab('settings')">Settings</button>
+            <button class="tab admin-only" onclick="switchTab('design')">Design</button>
         </div>
     </div>
 
@@ -59,7 +60,6 @@
 
     <!-- Scan Tab -->
     <div id="scan" class="tab-content active">
-        <div id="status" class="status"></div>
         
         <div id="resolveNextSection" class="resolve-next-section admin-only" style="display: none;">
             <div class="resolve-next-title">🔍 Resolving Unmatched Item</div>
@@ -96,6 +96,7 @@
                     <button type="button" id="imdbBtn" class="btn btn-secondary">📋 Lookup by IMDB ID</button>
                 </div>
             </div>
+        <div id="status" class="status"></div>
 
             <div class="form-row">
                 <div class="form-group">
@@ -596,6 +597,166 @@
         </div>
     </div>
 
+<!-- Design Tab (Admin Only) - CSS Live Designer -->
+<div id="design" class="tab-content admin-only">
+    <div class="detail-section">
+        <div class="detail-title">🎨 Live CSS Designer</div>
+        <p class="detail-text">Adjust card styles in real-time. Changes save automatically.</p>
+        
+        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+            <button onclick="CSSDesigner.resetStyles()" class="btn btn-secondary">🔄 Reset to Defaults</button>
+            <button onclick="CSSDesigner.exportCSS()" class="btn">📥 Export CSS</button>
+        </div>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="detail-section">
+        <div class="detail-title">👁️ Live Preview</div>
+        <div id="cssPreviewContainer" style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 12px; min-height: 300px;">
+            <div class="movie-grid grid-cols-3" id="cssPreviewGrid" style="gap: 1rem;">
+                <!-- Preview cards will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid Card Controls -->
+    <div class="detail-section">
+        <div class="detail-title">📦 Grid Card Settings</div>
+        
+        <div class="form-group">
+            <label for="cardBgOpacity">Card Background Opacity: <span id="cardBgOpacityValue">0.12</span></label>
+            <input type="range" id="cardBgOpacity" min="0" max="0.3" step="0.01" value="0.12" 
+                   onchange="CSSDesigner.updateStyle('cardBgOpacity', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="cardBorderRadius">Card Border Radius: <span id="cardBorderRadiusValue">16px</span></label>
+            <input type="range" id="cardBorderRadius" min="0" max="32" step="1" value="16" 
+                   onchange="CSSDesigner.updateStyle('cardBorderRadius', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="cardPadding">Card Content Padding: <span id="cardPaddingValue">0.75rem</span></label>
+            <input type="range" id="cardPadding" min="0.25" max="2" step="0.05" value="0.75" 
+                   onchange="CSSDesigner.updateStyle('cardPadding', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="cardGap">Gap Between Cards: <span id="cardGapValue">1rem</span></label>
+            <input type="range" id="cardGap" min="0.25" max="3" step="0.25" value="1" 
+                   onchange="CSSDesigner.updateStyle('cardGap', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="cardBorderColor">Card Border Color:</label>
+            <input type="color" id="cardBorderColor" value="#ffffff" 
+                   onchange="CSSDesigner.updateStyle('cardBorderColor', this.value)">
+            <input type="range" id="cardBorderOpacity" min="0" max="1" step="0.05" value="0.25" 
+                   onchange="CSSDesigner.updateStyle('cardBorderOpacity', this.value)" class="slider">
+            <span id="cardBorderOpacityValue">0.25</span>
+        </div>
+
+        <div class="form-group">
+            <label for="cardHoverScale">Hover Scale Effect: <span id="cardHoverScaleValue">1.02</span></label>
+            <input type="range" id="cardHoverScale" min="1" max="1.15" step="0.01" value="1.02" 
+                   onchange="CSSDesigner.updateStyle('cardHoverScale', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="cardHoverLift">Hover Lift (Y): <span id="cardHoverLiftValue">-8px</span></label>
+            <input type="range" id="cardHoverLift" min="-20" max="0" step="1" value="-8" 
+                   onchange="CSSDesigner.updateStyle('cardHoverLift', this.value)" class="slider">
+        </div>
+    </div>
+
+    <!-- Poster Settings -->
+    <div class="detail-section">
+        <div class="detail-title">🖼️ Poster Settings</div>
+        
+        <div class="form-group">
+            <label for="posterBorderRadius">Poster Border Radius: <span id="posterBorderRadiusValue">16px</span></label>
+            <input type="range" id="posterBorderRadius" min="0" max="32" step="1" value="16" 
+                   onchange="CSSDesigner.updateStyle('posterBorderRadius', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="posterAspectRatio">Poster Aspect Ratio: <span id="posterAspectRatioValue">2/3</span></label>
+            <select id="posterAspectRatio" onchange="CSSDesigner.updateStyle('posterAspectRatio', this.value)">
+                <option value="2/3">2:3 (Standard Movie Poster)</option>
+                <option value="3/4">3:4 (Slightly Wider)</option>
+                <option value="1/1">1:1 (Square)</option>
+                <option value="16/9">16:9 (Widescreen)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="posterFit">Poster Image Fit:</label>
+            <select id="posterFit" onchange="CSSDesigner.updateStyle('posterFit', this.value)">
+                <option value="contain">Contain (Show Full Image)</option>
+                <option value="cover">Cover (Fill Space, Crop)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Typography Settings -->
+    <div class="detail-section">
+        <div class="detail-title">📝 Typography Settings</div>
+        
+        <div class="form-group">
+            <label for="titleFontSize">Title Font Size: <span id="titleFontSizeValue">0.95rem</span></label>
+            <input type="range" id="titleFontSize" min="0.6" max="1.5" step="0.05" value="0.95" 
+                   onchange="CSSDesigner.updateStyle('titleFontSize', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="titleFontWeight">Title Font Weight: <span id="titleFontWeightValue">700</span></label>
+            <input type="range" id="titleFontWeight" min="400" max="900" step="100" value="700" 
+                   onchange="CSSDesigner.updateStyle('titleFontWeight', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="titleLineClamp">Title Max Lines: <span id="titleLineClampValue">2</span></label>
+            <input type="range" id="titleLineClamp" min="1" max="4" step="1" value="2" 
+                   onchange="CSSDesigner.updateStyle('titleLineClamp', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="infoFontSize">Info Font Size: <span id="infoFontSizeValue">0.8rem</span></label>
+            <input type="range" id="infoFontSize" min="0.5" max="1.2" step="0.05" value="0.8" 
+                   onchange="CSSDesigner.updateStyle('infoFontSize', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="infoOpacity">Info Text Opacity: <span id="infoOpacityValue">0.9</span></label>
+            <input type="range" id="infoOpacity" min="0.3" max="1" step="0.05" value="0.9" 
+                   onchange="CSSDesigner.updateStyle('infoOpacity', this.value)" class="slider">
+        </div>
+    </div>
+
+    <!-- Shadow Settings -->
+    <div class="detail-section">
+        <div class="detail-title">🌫️ Shadow & Effects</div>
+        
+        <div class="form-group">
+            <label for="cardShadowBlur">Card Shadow Blur: <span id="cardShadowBlurValue">25px</span></label>
+            <input type="range" id="cardShadowBlur" min="0" max="50" step="1" value="25" 
+                   onchange="CSSDesigner.updateStyle('cardShadowBlur', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="cardShadowOpacity">Card Shadow Opacity: <span id="cardShadowOpacityValue">0.1</span></label>
+            <input type="range" id="cardShadowOpacity" min="0" max="0.5" step="0.01" value="0.1" 
+                   onchange="CSSDesigner.updateStyle('cardShadowOpacity', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="cardBlur">Card Backdrop Blur: <span id="cardBlurValue">20px</span></label>
+            <input type="range" id="cardBlur" min="0" max="40" step="1" value="20" 
+                   onchange="CSSDesigner.updateStyle('cardBlur', this.value)" class="slider">
+        </div>
+    </div>
+</div>
+
     <!-- Modals -->
     <div id="searchModal" class="modal">
         <div class="modal-content">
@@ -649,6 +810,7 @@
     <script src="js/barcode-scanner.js"></script>
     <script src="js/cover-scanner.js"></script>
     <script src="js/service-worker.js"></script>
+    <script src="js/css-designer.js"></script>
     <script src="js/app.js"></script>
     
     <script>
