@@ -369,7 +369,7 @@ body::before {
 }
 
 .movie-card {
-    width: 100%; /* Full width of grid cell */
+    width: 100%;
     height: auto;
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(20px);
@@ -424,8 +424,8 @@ body::before {
 .movie-card .movie-poster {
     width: 100%;
     aspect-ratio: 2 / 3;
-    object-fit: cover; /* This ensures proper cropping if needed */
-    border-radius: 16px 16px 0 0; /* Round top corners only */
+    object-fit: cover;
+    border-radius: 16px 16px 0 0;
     margin-bottom: 0;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
     display: block;
@@ -453,7 +453,6 @@ body::before {
     text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
 }
 
-/* Movie info - formatted for progressive hiding */
 .movie-card .movie-info {
     color: rgba(255, 255, 255, 0.9);
     font-size: 0.8rem;
@@ -532,10 +531,10 @@ body::before {
 
 .movie-card img {
     width: 100%;
-    height: auto; /* Show full poster, no cropping */
-    aspect-ratio: 2/3; /* Maintain movie poster aspect ratio */
-    object-fit: contain; /* Don't crop, show full image */
-    background: rgba(0,0,0,0.3); /* Show dark background if image doesn't fill */
+    height: auto;
+    aspect-ratio: 2/3;
+    object-fit: contain;
+    background: rgba(0,0,0,0.3);
 }
 
 .movie-card.list-item {
@@ -600,88 +599,6 @@ body::before {
     transform: scale(1.05);
 }
 
-/* ==================================================
-   PROGRESSIVE INFORMATION HIDING
-   ================================================== */
-
-/* 2 columns: Show everything */
-.grid-cols-2 .movie-card-content {
-    padding: 1rem;
-}
-
-/* 3 columns: Show everything but slightly smaller */
-.grid-cols-3 .movie-card-content {
-    padding: 0.9rem;
-}
-
-/* 4 columns: Hide runtime and director */
-.grid-cols-4 .movie-card-runtime,
-.grid-cols-4 .movie-card-director {
-    display: none;
-}
-
-/* 5 columns: Also hide genre */
-.grid-cols-5 .movie-card-runtime,
-.grid-cols-5 .movie-card-director,
-.grid-cols-5 .movie-card-genre {
-    display: none;
-}
-
-.grid-cols-5 .movie-card-content {
-    padding: 0.7rem;
-}
-
-/* 6 columns: Also hide format */
-.grid-cols-6 .movie-card-runtime,
-.grid-cols-6 .movie-card-director,
-.grid-cols-6 .movie-card-genre,
-.grid-cols-6 .movie-card-format {
-    display: none;
-}
-
-.grid-cols-6 .movie-card-content {
-    padding: 0.6rem;
-}
-
-/* 7 columns: Only title, year, and rating */
-.grid-cols-7 .movie-card-runtime,
-.grid-cols-7 .movie-card-director,
-.grid-cols-7 .movie-card-genre,
-.grid-cols-7 .movie-card-format {
-    display: none;
-}
-
-.grid-cols-7 .movie-card-content {
-    padding: 0.5rem;
-}
-
-.grid-cols-7 .movie-card .movie-title {
-    font-size: 0.85rem;
-    -webkit-line-clamp: 1;
-}
-
-/* 8 columns: Minimal - only title and year */
-.grid-cols-8 .movie-card-runtime,
-.grid-cols-8 .movie-card-director,
-.grid-cols-8 .movie-card-genre,
-.grid-cols-8 .movie-card-format,
-.grid-cols-8 .movie-card-rating {
-    display: none;
-}
-
-.grid-cols-8 .movie-card-content {
-    padding: 0.4rem;
-}
-
-.grid-cols-8 .movie-card .movie-title {
-    font-size: 0.75rem;
-    -webkit-line-clamp: 1;
-}
-
-.grid-cols-8 .movie-card-year {
-    font-size: 0.7rem;
-}
-
 .view-controls {
     display: flex;
     flex-direction: column;
@@ -740,8 +657,8 @@ body::before {
     border-radius: 12px;
     padding: 0.6rem 0.9rem !important;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    margin-right: 0 !important; /* Override inline style */
-    flex-shrink: 0; /* Don't shrink */
+    margin-right: 0 !important;
+    flex-shrink: 0;
 }
 
 .size-slider-control span:first-child {
@@ -752,14 +669,13 @@ body::before {
 }
 
 .size-slider-control input[type="range"] {
-    width: 80px !important; /* Fixed shorter width */
+    width: 80px !important;
     cursor: pointer;
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
 }
 
-/* Slider track */
 .size-slider-control input[type="range"]::-webkit-slider-track {
     height: 5px;
     background: rgba(255, 255, 255, 0.25);
@@ -772,7 +688,6 @@ body::before {
     border-radius: 3px;
 }
 
-/* Slider thumb */
 .size-slider-control input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 16px;
@@ -803,7 +718,6 @@ body::before {
     transform: scale(1.15);
 }
 
-/* Value display */
 .size-slider-control span:last-child {
     color: rgba(255, 255, 255, 0.9) !important;
     font-size: 0.85rem !important;
@@ -1133,55 +1047,6 @@ body::before {
     gap: 1rem;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .movie-grid {
-        gap: 0.75rem;
-    }
-    
-    /* Force maximum 5 columns on tablets */
-    :root {
-        --collection-columns: min(var(--collection-columns), 5);
-        --wishlist-columns: min(var(--wishlist-columns), 5);
-    }
-}
-
-@media (max-width: 480px) {
-    .movie-grid {
-        gap: 0.5rem;
-    }
-    
-    /* Force maximum 3 columns on phones */
-    :root {
-        --collection-columns: min(var(--collection-columns), 3);
-        --wishlist-columns: min(var(--wishlist-columns), 3);
-    }
-}
-
-@media (max-width: 390px) {
-    .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 1rem;
-    }
-    
-    .modal-content {
-        margin: 1rem;
-        padding: 1.5rem;
-    }
-
-    .two-column {
-        grid-template-columns: 1fr;
-    }
-    
-    .header {
-        padding: 1.25rem 1rem;
-    }
-    
-    .header h1 {
-        font-size: 1.6rem;
-    }
-}
-
 .sort-controls {
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(20px);
@@ -1326,6 +1191,7 @@ body::before {
     object-fit: cover;
     border-radius: 16px;
 }
+
 #collectionGrid {
     grid-template-columns: repeat(var(--collection-columns), 1fr);
 }
@@ -1613,9 +1479,642 @@ body::before {
     margin-bottom: 1.5rem;
 }
 
-/* ========== THEME SYSTEM ========== */
+/* Small Cards View */
+.movie-grid.small-view {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+    gap: 1rem !important;
+}
 
-/* Dark Theme */
+.movie-card.small-item {
+    padding: 0.75rem !important;
+    border-radius: 12px;
+    max-width: 140px;
+}
+
+.movie-card.small-item .movie-poster {
+    width: 100% !important;
+    aspect-ratio: 2 / 3;
+    height: auto !important;
+    margin-bottom: 0.5rem !important;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.movie-card.small-item .movie-title {
+    font-size: 0.75rem !important;
+    margin-bottom: 0.25rem !important;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 2.4em;
+}
+
+.movie-card.small-item .movie-info {
+    font-size: 0.7rem !important;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+/* Quick Install Button */
+.quick-install-btn {
+    position: fixed;
+    top: 80px;
+    right: 15px;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 999;
+    box-shadow: 0 4px 20px rgba(72, 187, 120, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: none;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: quickInstallPulse 3s infinite;
+    white-space: nowrap;
+    min-width: 85px;
+}
+
+.quick-install-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 30px rgba(72, 187, 120, 0.6);
+}
+
+.quick-install-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.quick-install-btn.show {
+    display: flex;
+}
+
+.quick-install-btn.installed {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+    color: rgba(255, 255, 255, 0.7);
+    animation: none;
+    pointer-events: none;
+}
+
+@keyframes quickInstallPulse {
+    0%, 50%, 100% { 
+        box-shadow: 0 4px 20px rgba(72, 187, 120, 0.4);
+        transform: scale(1);
+    }
+    25%, 75% { 
+        box-shadow: 0 6px 25px rgba(72, 187, 120, 0.6);
+        transform: scale(1.02);
+    }
+}
+
+body:has(#install-banner) .quick-install-btn {
+    display: none !important;
+}
+
+/* Admin Role System */
+.admin-only {
+    display: block;
+}
+
+.admin-feature {
+    display: block;
+}
+
+.user-friendly-section {
+    display: block;
+}
+
+body.non-admin .admin-only {
+    display: none !important;
+}
+
+body.non-admin .admin-feature {
+    display: none !important;
+}
+
+body.non-admin .user-friendly-section {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+body.non-admin .user-friendly-section .detail-title {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+body.non-admin .tabs {
+    display: flex;
+    justify-content: space-around;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+body.non-admin .tabs .tab {
+    flex: 1;
+    font-size: 0.9rem;
+    padding: 1rem 0.75rem;
+}
+
+.admin-indicator {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    display: none;
+}
+
+.admin-indicator.show {
+    display: block;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.user-indicator {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    display: none;
+}
+
+.user-indicator.show {
+    display: block;
+    animation: slideInRight 0.3s ease-out;
+}
+
+#adminControls {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#adminControls .detail-title {
+    color: #28a745;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.non-admin .form-group {
+    margin-bottom: 1.25rem;
+}
+
+body.non-admin .form-group label {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+body.non-admin .two-column {
+    display: flex;
+    gap: 1rem;
+    flex-direction: row;
+}
+
+body.non-admin .two-column > * {
+    flex: 1;
+}
+
+body.non-admin .view-controls .view-toggle .admin-feature {
+    display: none;
+}
+
+body.non-admin .sort-controls select option.admin-feature {
+    display: none;
+}
+
+body.admin .quick-install-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+#appVersion {
+    font-weight: 600;
+    color: #28a745;
+}
+
+#lastUpdate {
+    font-weight: 600;
+    color: #20c997;
+}
+
+#appVersion.loading,
+#lastUpdate.loading {
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+.admin-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    animation: slideIn 0.3s ease-out;
+}
+
+.detail-section:has(#adminControls) {
+    border: 2px solid rgba(40, 167, 69, 0.3);
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.05) 100%);
+}
+
+.role-transition {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.non-admin select option[value*="runtime"],
+body.non-admin select option[value*="director"],
+body.non-admin select option[value*="format"] {
+    display: none;
+}
+
+.tab-content {
+    display: none !important;
+    padding: 1.5rem;
+    min-height: calc(100vh - 140px);
+}
+
+.tab-content.active {
+    display: block !important;
+    animation: fadeIn 0.3s ease-out;
+}
+
+body .tab-content:not(.active) {
+    display: none !important;
+}
+
+/* ============================================== */
+/* GRID SLIDER LAYOUT RULES                      */
+/* Controls: fonts, padding, info display        */
+/* Designer controls: colors, borders, shadows   */
+/* ============================================== */
+
+.movie-grid.grid-view.grid-cols-2 { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 1.5rem;
+}
+
+.movie-grid.grid-view.grid-cols-3 { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 1.25rem;
+}
+
+.movie-grid.grid-view.grid-cols-4 { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 1rem;
+}
+
+.movie-grid.grid-view.grid-cols-5 { 
+    display: grid; 
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 0.9rem;
+}
+
+.movie-grid.grid-view.grid-cols-6 { 
+    display: grid; 
+    grid-template-columns: repeat(6, 1fr); 
+    gap: 0.75rem;
+}
+
+.movie-grid.grid-view.grid-cols-7 { 
+    display: grid; 
+    grid-template-columns: repeat(7, 1fr); 
+    gap: 0.6rem;
+}
+
+.movie-grid.grid-view.grid-cols-8 { 
+    display: grid; 
+    grid-template-columns: repeat(8, 1fr); 
+    gap: 0.5rem;
+}
+
+/* 3 COLUMNS */
+.movie-grid.grid-view.grid-cols-3 .movie-card-content {
+    padding: 0.75rem !important;
+    gap: 0.3rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-3 .movie-card .movie-title {
+    font-size: 0.85rem !important;
+    line-height: 1.2 !important;
+    -webkit-line-clamp: 2 !important;
+    margin-bottom: 0.3rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-3 .movie-card-year,
+.movie-grid.grid-view.grid-cols-3 .movie-card-format {
+    font-size: 0.75rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-3 .movie-card-rating {
+    font-size: 0.75rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-3 .movie-card-runtime,
+.movie-grid.grid-view.grid-cols-3 .movie-card-director {
+    font-size: 0.70rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-3 .movie-card-genre {
+    font-size: 0.70rem !important;
+}
+
+/* 4 COLUMNS */
+.movie-grid.grid-view.grid-cols-4 .movie-card-content {
+    padding: 0.6rem !important;
+    gap: 0.25rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-4 .movie-card .movie-title {
+    font-size: 0.72rem !important;
+    line-height: 1.2 !important;
+    -webkit-line-clamp: 2 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-4 .movie-card-runtime,
+.movie-grid.grid-view.grid-cols-4 .movie-card-director {
+    display: none !important;
+}
+
+.movie-grid.grid-view.grid-cols-4 .movie-card-year,
+.movie-grid.grid-view.grid-cols-4 .movie-card-format {
+    font-size: 0.65rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-4 .movie-card-rating {
+    font-size: 0.65rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-4 .movie-card-genre {
+    font-size: 0.60rem !important;
+    line-height: 1.3 !important;
+}
+
+/* 5 COLUMNS */
+.movie-grid.grid-view.grid-cols-5 .movie-card-content {
+    padding: 0.5rem !important;
+    gap: 0.2rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-5 .movie-card .movie-title {
+    font-size: 0.68rem !important;
+    line-height: 1.2 !important;
+    -webkit-line-clamp: 2 !important;
+    margin-bottom: 0.2rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-5 .movie-card .movie-info {
+    line-height: 1.3 !important;
+}
+
+.movie-grid.grid-view.grid-cols-5 .movie-card-runtime,
+.movie-grid.grid-view.grid-cols-5 .movie-card-director,
+.movie-grid.grid-view.grid-cols-5 .movie-card-genre {
+    display: none !important;
+}
+
+.movie-grid.grid-view.grid-cols-5 .movie-info br:last-child {
+    display: none !important;
+}
+
+.movie-grid.grid-view.grid-cols-5 .movie-card-year,
+.movie-grid.grid-view.grid-cols-5 .movie-card-format {
+    font-size: 0.65rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-5 .movie-card-rating {
+    font-size: 0.65rem !important;
+}
+
+/* 6 COLUMNS */
+.movie-grid.grid-view.grid-cols-6 .movie-card-content {
+    padding: 0.4rem !important;
+    gap: 0.15rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-6 .movie-card .movie-title {
+    font-size: 0.7rem !important;
+    line-height: 1.1 !important;
+    -webkit-line-clamp: 2 !important;
+    margin-bottom: 0.15rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-6 .movie-card .movie-info {
+    line-height: 1.2 !important;
+}
+
+.movie-grid.grid-view.grid-cols-6 .movie-card-runtime,
+.movie-grid.grid-view.grid-cols-6 .movie-card-director,
+.movie-grid.grid-view.grid-cols-6 .movie-card-genre,
+.movie-grid.grid-view.grid-cols-6 .movie-card-format {
+    display: none !important;
+}
+
+.movie-grid.grid-view.grid-cols-6 .movie-card-year {
+    font-size: 0.6rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-6 .movie-card-rating {
+    font-size: 0.6rem !important;
+}
+
+/* 7 COLUMNS */
+.movie-grid.grid-view.grid-cols-7 .movie-card-content {
+    padding: 0.35rem !important;
+    gap: 0.1rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-7 .movie-card .movie-title {
+    font-size: 0.65rem !important;
+    line-height: 1.1 !important;
+    -webkit-line-clamp: 1 !important;
+    margin-bottom: 0.1rem !important;
+}
+
+.movie-grid.grid-view.grid-cols-7 .movie-card .movie-info {
+    line-height: 1.1 !important;
+}
+
+.movie-grid.grid-view.grid-cols-7 .movie-info br {
+    display: none !important;
+}
+
+.movie-grid.grid-view.grid-cols-7 .movie-card-runtime,
+.movie-grid.grid-view.grid-cols-7 .movie-card-director,
+.movie-grid.grid-view.grid-cols-7 .movie-card-genre,
+.movie-grid.grid-view.grid-cols-7 .movie-card-format {
+    display: none !important;
+}
+
+.movie-grid.grid-view.grid-cols-7 .movie-card-year,
+.movie-grid.grid-view.grid-cols-7 .movie-card-rating {
+    font-size: 0.45rem !important;
+    display: inline !important;
+    margin-right: 0.2rem !important;
+}
+
+/* 8 COLUMNS */
+.movie-grid.grid-view.grid-cols-8 .movie-card {
+    max-height: fit-content;
+}
+
+.movie-grid.grid-view.grid-cols-8 .movie-card-content {
+    padding: 0.25rem !important;
+    gap: 0 !important;
+}
+
+.movie-grid.grid-view.grid-cols-8 .movie-card .movie-title {
+    font-size: 0.48rem !important;
+    margin-bottom: 0.1rem !important;
+    -webkit-line-clamp: 1 !important;
+    line-height: 1 !important;
+    text-align: center;
+}
+
+.movie-grid.grid-view.grid-cols-8 .movie-info br {
+    display: none !important;
+}
+
+.movie-grid.grid-view.grid-cols-8 .movie-card-format,
+.movie-grid.grid-view.grid-cols-8 .movie-card-rating,
+.movie-grid.grid-view.grid-cols-8 .movie-card-runtime,
+.movie-grid.grid-view.grid-cols-8 .movie-card-director,
+.movie-grid.grid-view.grid-cols-8 .movie-card-genre {
+    display: none !important;
+}
+
+.movie-grid.grid-view.grid-cols-8 .movie-card-year {
+    font-size: 0.43rem !important;
+    text-align: center;
+    opacity: 0.7;
+    display: inline-block !important;
+}
+
+.movie-grid.grid-view.grid-cols-8 .movie-card .movie-info {
+    text-align: center;
+    line-height: 1 !important;
+    font-size: 0.43rem !important;
+}
+
+/* ============================================== */
+/* END OF GRID SLIDER LAYOUT RULES               */
+/* ============================================== */
+
+.filter-section {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.filter-label {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.filter-counter {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: opacity 0.3s ease;
+}
+
+.letter-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.letter-filter-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.15rem 0.25rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.55rem;
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 8px;
+    text-align: center;
+}
+
+.letter-filter-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.letter-filter-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}
+
+.letter-filter-btn:first-child {
+    min-width: 40px;
+}
+
+/* THEME SYSTEM */
 .theme-dark {
     background: linear-gradient(-45deg, #1a1a1a, #2d2d2d, #404040, #1a1a1a, #333333, #262626) !important;
 }
@@ -1636,7 +2135,6 @@ body::before {
     border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
-/* Light Theme */
 .theme-light {
     background: linear-gradient(-45deg, #f8f9fa, #e9ecef, #dee2e6, #f8f9fa, #ffffff, #f1f3f4) !important;
     color: #212529 !important;
@@ -1686,7 +2184,6 @@ body::before {
     color: #212529 !important;
 }
 
-/* Ocean Theme */
 .theme-ocean {
     background: linear-gradient(-45deg, #0077be, #00a8cc, #0096c7, #0077b6, #023e8a, #03045e) !important;
 }
@@ -1705,7 +2202,6 @@ body::before {
     border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
-/* Forest Theme */
 .theme-forest {
     background: linear-gradient(-45deg, #2d5016, #52b788, #40916c, #1b4332, #2d5a27, #081c15) !important;
 }
@@ -1724,7 +2220,6 @@ body::before {
     border-color: rgba(255, 255, 255, 0.25) !important;
 }
 
-/* Sunset Theme */
 .theme-sunset {
     background: linear-gradient(-45deg, #ff6b35, #f7931e, #ffbe0b, #fb8500, #e85d04, #dc2f02) !important;
 }
@@ -1743,7 +2238,6 @@ body::before {
     border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
-/* Royal Theme */
 .theme-royal {
     background: linear-gradient(-45deg, #6f2dbd, #a663cc, #b284be, #560bad, #480ca8, #3a0ca3) !important;
 }
@@ -1762,7 +2256,6 @@ body::before {
     border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
-/* Minimal Theme */
 .theme-minimal {
     background: linear-gradient(-45deg, #6c757d, #adb5bd, #dee2e6, #495057, #6c757d, #343a40) !important;
 }
@@ -1781,27 +2274,97 @@ body::before {
     border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Responsive adjustments */
-@media (max-width: 420px) {
-    .view-controls-row {
-        gap: 0.5rem;
-    }
-    
-    .size-slider-control {
-        padding: 0.5rem 0.75rem !important;
-    }
-    
-    .size-slider-control input[type="range"] {
-        width: 60px !important;
-    }
-    
-    .view-btn {
-        padding: 0.5rem 0.6rem;
-        font-size: 0.9rem;
-    }
+/* ANIMATION SPEED CONTROLS */
+.anim-fast * {
+    transition-duration: 0.1s !important;
+    animation-duration: 0.1s !important;
 }
 
-/* Compact Mode Adjustments */
+.anim-fast .gradientShift {
+    animation-duration: 7s !important;
+}
+
+.anim-fast .floatingOrbs {
+    animation-duration: 10s !important;
+}
+
+.anim-slow * {
+    transition-duration: 0.8s !important;
+    animation-duration: 0.8s !important;
+}
+
+.anim-slow .gradientShift {
+    animation-duration: 30s !important;
+}
+
+.anim-slow .floatingOrbs {
+    animation-duration: 40s !important;
+}
+
+.anim-none * {
+    transition: none !important;
+    animation: none !important;
+}
+
+.anim-none .header::before,
+.anim-none .btn::before,
+.anim-none .scanner-overlay::before {
+    animation: none !important;
+}
+
+/* CARD STYLE VARIATIONS */
+.card-sharp .movie-card,
+.card-sharp .detail-section,
+.card-sharp .status,
+.card-sharp .modal-content,
+.card-sharp .form-group input,
+.card-sharp .form-group select,
+.card-sharp .form-group textarea,
+.card-sharp .btn {
+    border-radius: 4px !important;
+}
+
+.card-sharp .movie-poster {
+    border-radius: 4px !important;
+}
+
+.card-ultra-round .movie-card,
+.card-ultra-round .detail-section,
+.card-ultra-round .status {
+    border-radius: 28px !important;
+}
+
+.card-ultra-round .modal-content {
+    border-radius: 32px !important;
+}
+
+.card-ultra-round .form-group input,
+.card-ultra-round .form-group select,
+.card-ultra-round .form-group textarea {
+    border-radius: 20px !important;
+}
+
+.card-ultra-round .btn {
+    border-radius: 24px !important;
+}
+
+.card-ultra-round .movie-poster {
+    border-radius: 20px !important;
+}
+
+.card-minimal .movie-card,
+.card-minimal .detail-section,
+.card-minimal .status {
+    border-radius: 8px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.card-minimal .movie-poster {
+    border-radius: 6px !important;
+}
+
+/* COMPACT MODE */
 .compact-mode {
     max-width: 380px !important;
 }
@@ -1897,167 +2460,6 @@ body::before {
     padding: 0.5rem 0.65rem;
 }
 
-/* ========== ANIMATION SPEED CONTROLS ========== */
-
-/* Fast Animations */
-.anim-fast * {
-    transition-duration: 0.1s !important;
-    animation-duration: 0.1s !important;
-}
-
-.anim-fast .gradientShift {
-    animation-duration: 7s !important;
-}
-
-.anim-fast .floatingOrbs {
-    animation-duration: 10s !important;
-}
-
-/* Slow Animations */
-.anim-slow * {
-    transition-duration: 0.8s !important;
-    animation-duration: 0.8s !important;
-}
-
-.anim-slow .gradientShift {
-    animation-duration: 30s !important;
-}
-
-.anim-slow .floatingOrbs {
-    animation-duration: 40s !important;
-}
-
-/* No Animations */
-.anim-none * {
-    transition: none !important;
-    animation: none !important;
-}
-
-.anim-none .header::before,
-.anim-none .btn::before,
-.anim-none .scanner-overlay::before {
-    animation: none !important;
-}
-
-/* ========== CARD STYLE VARIATIONS ========== */
-
-/* Sharp Cards */
-.card-sharp .movie-card,
-.card-sharp .detail-section,
-.card-sharp .status,
-.card-sharp .modal-content,
-.card-sharp .form-group input,
-.card-sharp .form-group select,
-.card-sharp .form-group textarea,
-.card-sharp .btn {
-    border-radius: 4px !important;
-}
-
-.card-sharp .movie-poster {
-    border-radius: 4px !important;
-}
-
-/* Ultra Round Cards */
-.card-ultra-round .movie-card,
-.card-ultra-round .detail-section,
-.card-ultra-round .status {
-    border-radius: 28px !important;
-}
-
-.card-ultra-round .modal-content {
-    border-radius: 32px !important;
-}
-
-.card-ultra-round .form-group input,
-.card-ultra-round .form-group select,
-.card-ultra-round .form-group textarea {
-    border-radius: 20px !important;
-}
-
-.card-ultra-round .btn {
-    border-radius: 24px !important;
-}
-
-.card-ultra-round .movie-poster {
-    border-radius: 20px !important;
-}
-
-/* Minimal Cards */
-.card-minimal .movie-card,
-.card-minimal .detail-section,
-.card-minimal .status {
-    border-radius: 8px !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-}
-
-.card-minimal .movie-poster {
-    border-radius: 6px !important;
-}
-/* Small Cards View - Add this to your styles.css file */
-
-.movie-grid.small-view {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
-    gap: 1rem !important;
-}
-
-.movie-card.small-item {
-    padding: 0.75rem !important;
-    border-radius: 12px;
-    max-width: 140px;
-}
-
-.movie-card.small-item .movie-poster {
-    width: 100% !important;
-    height: 130px !important;
-    margin-bottom: 0.5rem !important;
-    border-radius: 8px;
-}
-
-.movie-card.small-item .movie-title {
-    font-size: 0.75rem !important;
-    margin-bottom: 0.25rem !important;
-    line-height: 1.2;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    height: 2.4em;
-}
-
-.movie-card.small-item .movie-info {
-    font-size: 0.65rem !important;
-    line-height: 1.3;
-    opacity: 0.9;
-}
-
-/* Responsive adjustments for small cards */
-@media (max-width: 420px) {
-    .movie-grid.small-view {
-        grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)) !important;
-        gap: 0.75rem !important;
-    }
-    
-    .movie-card.small-item {
-        padding: 0.5rem !important;
-        max-width: 120px;
-    }
-    
-    .movie-card.small-item .movie-poster {
-        height: 110px !important;
-    }
-    
-    .movie-card.small-item .movie-title {
-        font-size: 0.7rem !important;
-    }
-    
-    .movie-card.small-item .movie-info {
-        font-size: 0.6rem !important;
-    }
-}
-
-/* Compact mode adjustments for small cards */
 .compact-mode .movie-grid.small-view {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)) !important;
     gap: 0.5rem !important;
@@ -2082,614 +2484,6 @@ body::before {
     font-size: 0.55rem !important;
 }
 
-/* Quick Install Button */
-.quick-install-btn {
-    position: fixed;
-    top: 80px;
-    right: 15px;
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-    color: white;
-    border: none;
-    padding: 10px 14px;
-    border-radius: 50px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-    z-index: 999;
-    box-shadow: 0 4px 20px rgba(72, 187, 120, 0.4);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: none;
-    align-items: center;
-    gap: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    animation: quickInstallPulse 3s infinite;
-    white-space: nowrap;
-    min-width: 85px;
-}
-
-.quick-install-btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 8px 30px rgba(72, 187, 120, 0.6);
-}
-
-.quick-install-btn:active {
-    transform: translateY(0) scale(0.98);
-}
-
-.quick-install-btn.show {
-    display: flex;
-}
-
-.quick-install-btn.installed {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
-    color: rgba(255, 255, 255, 0.7);
-    animation: none;
-    pointer-events: none;
-}
-
-@keyframes quickInstallPulse {
-    0%, 50%, 100% { 
-        box-shadow: 0 4px 20px rgba(72, 187, 120, 0.4);
-        transform: scale(1);
-    }
-    25%, 75% { 
-        box-shadow: 0 6px 25px rgba(72, 187, 120, 0.6);
-        transform: scale(1.02);
-    }
-}
-
-/* Mobile responsiveness */
-@media (max-width: 480px) {
-    .quick-install-btn {
-        right: 10px;
-        font-size: 11px;
-        padding: 8px 12px;
-        min-width: 75px;
-    }
-}
-
-/* Hide quick install button when install banner is visible */
-body:has(#install-banner) .quick-install-btn {
-    display: none !important;
-}
-
-/* Admin Role System Styling */
-.admin-only {
-    display: block;
-}
-
-.admin-feature {
-    display: block;
-}
-
-.user-friendly-section {
-    display: block;
-}
-
-/* Hide admin elements for non-admin users */
-body.non-admin .admin-only {
-    display: none !important;
-}
-
-body.non-admin .admin-feature {
-    display: none !important;
-}
-
-/* Enhanced user-friendly styling for regular users */
-body.non-admin .user-friendly-section {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 1.5rem;
-    border-radius: 16px;
-    margin-bottom: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-body.non-admin .user-friendly-section .detail-title {
-    color: white;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-}
-
-/* Simplified tabs layout for non-admin users */
-body.non-admin .tabs {
-    display: flex;
-    justify-content: space-around;
-    background: rgba(255, 255, 255, 0.15);
-}
-
-body.non-admin .tabs .tab {
-    flex: 1;
-    font-size: 0.9rem;
-    padding: 1rem 0.75rem;
-}
-
-/* Admin user indicator */
-.admin-indicator {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    display: none;
-}
-
-.admin-indicator.show {
-    display: block;
-    animation: slideInRight 0.3s ease-out;
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(100px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* Regular user indicator */
-.user-indicator {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    display: none;
-}
-
-.user-indicator.show {
-    display: block;
-    animation: slideInRight 0.3s ease-out;
-}
-
-/* Admin controls styling */
-#adminControls {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-#adminControls .detail-title {
-    color: #28a745;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Simplified form styling for regular users */
-body.non-admin .form-group {
-    margin-bottom: 1.25rem;
-}
-
-body.non-admin .form-group label {
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
-}
-
-body.non-admin .two-column {
-    display: flex;
-    gap: 1rem;
-    flex-direction: row;
-}
-
-body.non-admin .two-column > * {
-    flex: 1;
-}
-
-/* Hide complex view controls for regular users */
-body.non-admin .view-controls .view-toggle .admin-feature {
-    display: none;
-}
-
-/* Simplified sort options for regular users */
-body.non-admin .sort-controls select option.admin-feature {
-    display: none;
-}
-
-/* Mobile responsive admin indicators */
-@media (max-width: 480px) {
-    .admin-indicator,
-    .user-indicator {
-        top: 5px;
-        right: 5px;
-        font-size: 0.7rem;
-        padding: 3px 8px;
-    }
-}
-
-/* Enhanced quick install button for admin users */
-body.admin .quick-install-btn {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-}
-
-/* Version display styling */
-#appVersion {
-    font-weight: 600;
-    color: #28a745;
-}
-
-#lastUpdate {
-    font-weight: 600;
-    color: #20c997;
-}
-
-/* Loading states for version display */
-#appVersion.loading,
-#lastUpdate.loading {
-    color: rgba(255, 255, 255, 0.5);
-    font-style: italic;
-}
-
-/* Success state for admin actions */
-.admin-success {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
-    animation: slideIn 0.3s ease-out;
-}
-
-/* Enhanced admin section borders */
-.detail-section:has(#adminControls) {
-    border: 2px solid rgba(40, 167, 69, 0.3);
-    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.05) 100%);
-}
-
-/* User role transition animations */
-.role-transition {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Hide admin-only sort options dynamically */
-body.non-admin select option[value*="runtime"],
-body.non-admin select option[value*="director"],
-body.non-admin select option[value*="format"] {
-    display: none;
-}
-
-/* EMERGENCY TAB FIX - Force proper tab behavior */
-.tab-content {
-    display: none !important;
-    padding: 1.5rem;
-    min-height: calc(100vh - 140px);
-}
-
-.tab-content.active {
-    display: block !important;
-    animation: fadeIn 0.3s ease-out;
-}
-
-/* Ensure only one tab shows at a time */
-body .tab-content:not(.active) {
-    display: none !important;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ============================================== */
-/* SLIDER CARD SIZE ADJUSTMENTS - SMALLER FONTS */
-/* Updated with 20% smaller (3-6) and 50% smaller (7-8) */
-/* ============================================== */
-
-/* 3 COLUMNS - 20% smaller fonts */
-.grid-cols-3 .movie-card-content {
-    padding: 0.75rem !important;
-    gap: 0.3rem !important;
-}
-
-.grid-cols-3 .movie-card .movie-title {
-    font-size: 0.76rem !important;
-    line-height: 1.2 !important;
-    -webkit-line-clamp: 2 !important;
-    margin-bottom: 0.3rem !important;
-}
-
-.grid-cols-3 .movie-card-year,
-.grid-cols-3 .movie-card-format {
-    font-size: 0.70rem !important;
-}
-
-.grid-cols-3 .movie-card-rating {
-    font-size: 0.70rem !important;
-}
-
-.grid-cols-3 .movie-card-runtime,
-.grid-cols-3 .movie-card-director {
-    font-size: 0.65rem !important;
-}
-
-.grid-cols-3 .movie-card-genre {
-    font-size: 0.65rem !important;
-}
-
-/* 4 COLUMNS - 20% smaller fonts */
-.grid-cols-4 .movie-card-content {
-    padding: 0.6rem !important;
-    gap: 0.25rem !important;
-}
-
-.grid-cols-4 .movie-card .movie-title {
-    font-size: 0.72rem !important;
-    line-height: 1.2 !important;
-    -webkit-line-clamp: 2 !important;
-    margin-bottom: 0.25rem !important;
-}
-
-.grid-cols-4 .movie-card-runtime,
-.grid-cols-4 .movie-card-director {
-    display: none !important;
-}
-
-.grid-cols-4 .movie-card-year,
-.grid-cols-4 .movie-card-format {
-    font-size: 0.65rem !important;
-}
-
-.grid-cols-4 .movie-card-rating {
-    font-size: 0.65rem !important;
-}
-
-.grid-cols-4 .movie-card-genre {
-    font-size: 0.60rem !important;
-    line-height: 1.3 !important;
-}
-
-/* 5 COLUMNS - 20% smaller fonts */
-.grid-cols-5 .movie-card-content {
-    padding: 0.5rem !important;
-    gap: 0.2rem !important;
-}
-
-.grid-cols-5 .movie-card .movie-title {
-    font-size: 0.68rem !important;
-    line-height: 1.2 !important;
-    -webkit-line-clamp: 2 !important;
-    margin-bottom: 0.2rem !important;
-}
-
-.grid-cols-5 .movie-card .movie-info {
-    line-height: 1.3 !important;
-}
-
-.grid-cols-5 .movie-card-runtime,
-.grid-cols-5 .movie-card-director,
-.grid-cols-5 .movie-card-genre {
-    display: none !important;
-}
-
-.grid-cols-5 .movie-card-year,
-.grid-cols-5 .movie-card-format {
-    font-size: 0.60rem !important;
-}
-
-.grid-cols-5 .movie-card-rating {
-    font-size: 0.60rem !important;
-}
-
-/* 6 COLUMNS - 20% smaller fonts */
-.grid-cols-6 .movie-card-content {
-    padding: 0.4rem !important;
-    gap: 0.15rem !important;
-}
-
-.grid-cols-6 .movie-card .movie-title {
-    font-size: 0.64rem !important;
-    line-height: 1.1 !important;
-    -webkit-line-clamp: 2 !important;
-    margin-bottom: 0.15rem !important;
-}
-
-.grid-cols-6 .movie-card .movie-info {
-    line-height: 1.2 !important;
-}
-
-.grid-cols-6 .movie-card-runtime,
-.grid-cols-6 .movie-card-director,
-.grid-cols-6 .movie-card-genre,
-.grid-cols-6 .movie-card-format {
-    display: none !important;
-}
-
-.grid-cols-6 .movie-card-year {
-    font-size: 0.55rem !important;
-}
-
-.grid-cols-6 .movie-card-rating {
-    font-size: 0.55rem !important;
-}
-
-/* 7 COLUMNS - 50% smaller fonts */
-.grid-cols-7 .movie-card-content {
-    padding: 0.35rem !important;
-    gap: 0.1rem !important;
-}
-
-.grid-cols-7 .movie-card .movie-title {
-    font-size: 0.50rem !important;
-    line-height: 1.1 !important;
-    -webkit-line-clamp: 1 !important;
-    margin-bottom: 0.1rem !important;
-}
-
-.grid-cols-7 .movie-card .movie-info {
-    line-height: 1.1 !important;
-}
-
-/* Remove line breaks at 7 columns */
-.grid-cols-7 .movie-info br {
-    display: none !important;
-}
-
-.grid-cols-7 .movie-card-runtime,
-.grid-cols-7 .movie-card-director,
-.grid-cols-7 .movie-card-genre,
-.grid-cols-7 .movie-card-format {
-    display: none !important;
-}
-
-.grid-cols-7 .movie-card-year,
-.grid-cols-7 .movie-card-rating {
-    font-size: 0.45rem !important;
-    display: inline !important;
-    margin-right: 0.2rem !important;
-}
-
-/* Tighter grid gap */
-.grid-cols-7 {
-    gap: 0.6rem !important;
-}
-
-/* 8 COLUMNS - 50% smaller fonts */
-.grid-cols-8 .movie-card {
-    max-height: fit-content;
-}
-
-.grid-cols-8 .movie-card-content {
-    padding: 0.25rem !important;
-    gap: 0 !important;
-}
-
-.grid-cols-8 .movie-card .movie-title {
-    font-size: 0.48rem !important;
-    margin-bottom: 0.1rem !important;
-    -webkit-line-clamp: 1 !important;
-    line-height: 1 !important;
-    text-align: center;
-}
-
-/* Remove ALL line breaks at 8 columns */
-.grid-cols-8 .movie-info br {
-    display: none !important;
-}
-
-/* Hide ALL info except year at 8 columns */
-.grid-cols-8 .movie-card-format,
-.grid-cols-8 .movie-card-rating,
-.grid-cols-8 .movie-card-runtime,
-.grid-cols-8 .movie-card-director,
-.grid-cols-8 .movie-card-genre {
-    display: none !important;
-}
-
-.grid-cols-8 .movie-card-year {
-    font-size: 0.43rem !important;
-    text-align: center;
-    opacity: 0.7;
-    display: inline-block !important;
-}
-
-.grid-cols-8 .movie-card .movie-info {
-    text-align: center;
-    line-height: 1 !important;
-    font-size: 0.43rem !important;
-}
-
-/* Tighter grid gap for 8 columns */
-.grid-cols-8 {
-    gap: 0.5rem !important;
-}
-
-/* ============================================== */
-/* END OF CUSTOM FIXES                           */
-/* ============================================== */
-
-.filter-section {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 12px;
-    padding: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.filter-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-}
-
-.filter-label {
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.filter-counter {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: opacity 0.3s ease;
-}
-
-.letter-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-}
-
-.letter-filter-btn {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.8);
-    padding: 0.15rem 0.25rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.55rem;
-    font-weight: 600;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    min-width: 8px;
-    text-align: center;
-}
-
-.letter-filter-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
-    color: white;
-    transform: translateY(-1px);
-}
-
-.letter-filter-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-color: transparent;
-    color: white;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-}
-
-.letter-filter-btn:first-child {
-    min-width: 40px;
-}
-
-/* Compact mode adjustments */
 .compact-mode .filter-section {
     padding: 0.75rem;
     margin-bottom: 0.75rem;
@@ -2701,55 +2495,90 @@ body .tab-content:not(.active) {
     min-width: 28px;
 }
 
-/* Mobile responsive */
-@media (max-width: 420px) {
-    .letter-filter {
-        gap: 0.3rem;
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .movie-grid {
+        gap: 0.75rem;
     }
     
-    .letter-filter-btn {
-        padding: 0.35rem 0.5rem;
-        font-size: 0.75rem;
-        min-width: 28px;
+    :root {
+        --collection-columns: min(var(--collection-columns), 5);
+        --wishlist-columns: min(var(--wishlist-columns), 5);
+    }
+}
+
+@media (max-width: 480px) {
+    .movie-grid {
+        gap: 0.5rem;
+    }
+    
+    :root {
+        --collection-columns: min(var(--collection-columns), 3);
+        --wishlist-columns: min(var(--wishlist-columns), 3);
+    }
+    
+    .admin-indicator,
+    .user-indicator {
+        top: 5px;
+        right: 5px;
+        font-size: 0.7rem;
+        padding: 3px 8px;
+    }
+    
+    .quick-install-btn {
+        right: 10px;
+        font-size: 11px;
+        padding: 8px 12px;
+        min-width: 75px;
     }
 }
 
 @media (max-width: 420px) {
-    .view-controls-row {
-        flex-direction: column !important;
+    .movie-grid.small-view {
+        grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)) !important;
         gap: 0.75rem !important;
     }
     
-    .size-slider-control,
-    .view-toggle {
-        width: 100% !important;
+    .movie-card.small-item {
+        padding: 0.5rem !important;
+        max-width: 120px;
     }
     
-    .filter-section {
-        padding: 0.75rem !important;
+    .movie-card.small-item .movie-poster {
+        height: 110px !important;
     }
     
-    .letter-filter-btn {
-        padding: 0.5rem 0.65rem !important;
-        min-width: 34px !important;
-        font-size: 0.75rem !important;
+    .movie-card.small-item .movie-title {
+        font-size: 0.7rem !important;
     }
-}
-
-/* ============================================== */
-/* MOBILE LAYOUT FIXES                           */
-/* Add at the VERY BOTTOM of styles.css         */
-/* ============================================== */
-
-@media (max-width: 420px) {
-    /* Stack slider and view buttons vertically */
+    
+    .movie-card.small-item .movie-info {
+        font-size: 0.6rem !important;
+    }
+    
+    .view-controls-row {
+        gap: 0.5rem;
+    }
+    
+    .size-slider-control {
+        padding: 0.5rem 0.75rem !important;
+    }
+    
+    .size-slider-control input[type="range"] {
+        width: 60px !important;
+    }
+    
+    .view-btn {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.9rem;
+    }
+    
     .view-controls-row {
         flex-direction: column !important;
         gap: 0.75rem !important;
         width: 100% !important;
     }
     
-    /* Full width slider and buttons */
     .size-slider-control,
     .view-toggle {
         width: 100% !important;
@@ -2765,7 +2594,6 @@ body .tab-content:not(.active) {
         width: 100% !important;
     }
     
-    /* Better touch targets for letter filter */
     .letter-filter {
         gap: 0.5rem !important;
     }
@@ -2778,13 +2606,11 @@ body .tab-content:not(.active) {
         -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
     }
     
-    /* Ensure filter section doesn't overflow */
     .filter-section {
         padding: 0.75rem !important;
         overflow-x: hidden;
     }
     
-    /* View toggle buttons spread out */
     .view-toggle {
         justify-content: space-around !important;
     }
@@ -2792,5 +2618,29 @@ body .tab-content:not(.active) {
     .view-btn {
         flex: 1 !important;
         padding: 0.6rem !important;
+    }
+}
+
+@media (max-width: 390px) {
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 1rem;
+    }
+    
+    .modal-content {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+    
+    .header {
+        padding: 1.25rem 1rem;
+    }
+    
+    .header h1 {
+        font-size: 1.6rem;
     }
 }

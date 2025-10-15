@@ -603,8 +603,23 @@
         <div class="detail-title">🎨 Live CSS Designer</div>
         <p class="detail-text">Adjust card styles in real-time. Changes save automatically.</p>
         
+        <!-- Tab Selector -->
+        <div class="form-group" style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
+            <label for="cssTabSelector" style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; display: block;">
+                📂 Apply Styles To:
+            </label>
+            <select id="cssTabSelector" style="width: 100%; padding: 0.5rem; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 0.95rem;">
+                <option value="both">🌐 Both Movies & Wishlist (Global)</option>
+                <option value="collection">🎬 Movies Tab Only</option>
+                <option value="wishlist">⭐ Wishlist Tab Only</option>
+            </select>
+            <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 0.5rem; margin-bottom: 0;">
+                💡 Tip: Use "Global" for consistent styling, or customize each tab separately
+            </p>
+        </div>
+        
         <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-            <button onclick="CSSDesigner.resetStyles()" class="btn btn-secondary">🔄 Reset to Defaults</button>
+            <button onclick="CSSDesigner.resetStyles()" class="btn btn-secondary">🔄 Reset Current Tab</button>
             <button onclick="CSSDesigner.exportCSS()" class="btn">📥 Export CSS</button>
         </div>
     </div>
@@ -619,9 +634,12 @@
         </div>
     </div>
 
-    <!-- Grid Card Controls -->
+    <!-- Grid Card Controls - STYLING ONLY (not layout) -->
     <div class="detail-section">
-        <div class="detail-title">📦 Grid Card Settings</div>
+        <div class="detail-title">🎨 Card Appearance (Colors, Borders, Effects)</div>
+        <p class="detail-text" style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem;">
+            These controls adjust visual styling only. Layout (fonts, padding, info display) is controlled by the grid slider.
+        </p>
         
         <div class="form-group">
             <label for="cardBgOpacity">Card Background Opacity: <span id="cardBgOpacityValue">0.12</span></label>
@@ -636,107 +654,23 @@
         </div>
 
         <div class="form-group">
-            <label for="cardPadding">Card Content Padding: <span id="cardPaddingValue">0.75rem</span></label>
-            <input type="range" id="cardPadding" min="0.25" max="2" step="0.05" value="0.75" 
-                   onchange="CSSDesigner.updateStyle('cardPadding', this.value)" class="slider">
-        </div>
-
-        <div class="form-group">
-            <label for="cardGap">Gap Between Cards: <span id="cardGapValue">1rem</span></label>
-            <input type="range" id="cardGap" min="0.25" max="3" step="0.25" value="1" 
-                   onchange="CSSDesigner.updateStyle('cardGap', this.value)" class="slider">
-        </div>
-
-        <div class="form-group">
             <label for="cardBorderColor">Card Border Color:</label>
             <input type="color" id="cardBorderColor" value="#ffffff" 
                    onchange="CSSDesigner.updateStyle('cardBorderColor', this.value)">
+        </div>
+
+        <div class="form-group">
+            <label for="cardBorderOpacity">Card Border Opacity: <span id="cardBorderOpacityValue">0.25</span></label>
             <input type="range" id="cardBorderOpacity" min="0" max="1" step="0.05" value="0.25" 
                    onchange="CSSDesigner.updateStyle('cardBorderOpacity', this.value)" class="slider">
-            <span id="cardBorderOpacityValue">0.25</span>
         </div>
 
         <div class="form-group">
-            <label for="cardHoverScale">Hover Scale Effect: <span id="cardHoverScaleValue">1.02</span></label>
-            <input type="range" id="cardHoverScale" min="1" max="1.15" step="0.01" value="1.02" 
-                   onchange="CSSDesigner.updateStyle('cardHoverScale', this.value)" class="slider">
+            <label for="cardBlur">Card Backdrop Blur: <span id="cardBlurValue">20px</span></label>
+            <input type="range" id="cardBlur" min="0" max="40" step="1" value="20" 
+                   onchange="CSSDesigner.updateStyle('cardBlur', this.value)" class="slider">
         </div>
 
-        <div class="form-group">
-            <label for="cardHoverLift">Hover Lift (Y): <span id="cardHoverLiftValue">-8px</span></label>
-            <input type="range" id="cardHoverLift" min="-20" max="0" step="1" value="-8" 
-                   onchange="CSSDesigner.updateStyle('cardHoverLift', this.value)" class="slider">
-        </div>
-    </div>
-
-    <!-- Poster Settings -->
-    <div class="detail-section">
-        <div class="detail-title">🖼️ Poster Settings</div>
-        
-        <div class="form-group">
-            <label for="posterBorderRadius">Poster Border Radius: <span id="posterBorderRadiusValue">16px</span></label>
-            <input type="range" id="posterBorderRadius" min="0" max="32" step="1" value="16" 
-                   onchange="CSSDesigner.updateStyle('posterBorderRadius', this.value)" class="slider">
-        </div>
-
-        <div class="form-group">
-            <label for="posterAspectRatio">Poster Aspect Ratio: <span id="posterAspectRatioValue">2/3</span></label>
-            <select id="posterAspectRatio" onchange="CSSDesigner.updateStyle('posterAspectRatio', this.value)">
-                <option value="2/3">2:3 (Standard Movie Poster)</option>
-                <option value="3/4">3:4 (Slightly Wider)</option>
-                <option value="1/1">1:1 (Square)</option>
-                <option value="16/9">16:9 (Widescreen)</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="posterFit">Poster Image Fit:</label>
-            <select id="posterFit" onchange="CSSDesigner.updateStyle('posterFit', this.value)">
-                <option value="contain">Contain (Show Full Image)</option>
-                <option value="cover">Cover (Fill Space, Crop)</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Typography Settings -->
-    <div class="detail-section">
-        <div class="detail-title">📝 Typography Settings</div>
-        
-        <div class="form-group">
-            <label for="titleFontSize">Title Font Size: <span id="titleFontSizeValue">0.95rem</span></label>
-            <input type="range" id="titleFontSize" min="0.6" max="1.5" step="0.05" value="0.95" 
-                   onchange="CSSDesigner.updateStyle('titleFontSize', this.value)" class="slider">
-        </div>
-
-        <div class="form-group">
-            <label for="titleFontWeight">Title Font Weight: <span id="titleFontWeightValue">700</span></label>
-            <input type="range" id="titleFontWeight" min="400" max="900" step="100" value="700" 
-                   onchange="CSSDesigner.updateStyle('titleFontWeight', this.value)" class="slider">
-        </div>
-
-        <div class="form-group">
-            <label for="titleLineClamp">Title Max Lines: <span id="titleLineClampValue">2</span></label>
-            <input type="range" id="titleLineClamp" min="1" max="4" step="1" value="2" 
-                   onchange="CSSDesigner.updateStyle('titleLineClamp', this.value)" class="slider">
-        </div>
-
-        <div class="form-group">
-            <label for="infoFontSize">Info Font Size: <span id="infoFontSizeValue">0.8rem</span></label>
-            <input type="range" id="infoFontSize" min="0.5" max="1.2" step="0.05" value="0.8" 
-                   onchange="CSSDesigner.updateStyle('infoFontSize', this.value)" class="slider">
-        </div>
-
-        <div class="form-group">
-            <label for="infoOpacity">Info Text Opacity: <span id="infoOpacityValue">0.9</span></label>
-            <input type="range" id="infoOpacity" min="0.3" max="1" step="0.05" value="0.9" 
-                   onchange="CSSDesigner.updateStyle('infoOpacity', this.value)" class="slider">
-        </div>
-    </div>
-
-    <!-- Shadow Settings -->
-    <div class="detail-section">
-        <div class="detail-title">🌫️ Shadow & Effects</div>
-        
         <div class="form-group">
             <label for="cardShadowBlur">Card Shadow Blur: <span id="cardShadowBlurValue">25px</span></label>
             <input type="range" id="cardShadowBlur" min="0" max="50" step="1" value="25" 
@@ -745,14 +679,54 @@
 
         <div class="form-group">
             <label for="cardShadowOpacity">Card Shadow Opacity: <span id="cardShadowOpacityValue">0.1</span></label>
-            <input type="range" id="cardShadowOpacity" min="0" max="0.5" step="0.01" value="0.1" 
+            <input type="range" id="cardShadowOpacity" min="0" max="0.5" step="0.05" value="0.1" 
                    onchange="CSSDesigner.updateStyle('cardShadowOpacity', this.value)" class="slider">
+        </div>
+    </div>
+
+    <!-- Hover Effects -->
+    <div class="detail-section">
+        <div class="detail-title">✨ Hover Effects</div>
+        
+        <div class="form-group">
+            <label for="cardHoverScale">Hover Scale: <span id="cardHoverScaleValue">1.02</span></label>
+            <input type="range" id="cardHoverScale" min="1" max="1.1" step="0.01" value="1.02" 
+                   onchange="CSSDesigner.updateStyle('cardHoverScale', this.value)" class="slider">
         </div>
 
         <div class="form-group">
-            <label for="cardBlur">Card Backdrop Blur: <span id="cardBlurValue">20px</span></label>
-            <input type="range" id="cardBlur" min="0" max="40" step="1" value="20" 
-                   onchange="CSSDesigner.updateStyle('cardBlur', this.value)" class="slider">
+            <label for="cardHoverLift">Hover Lift (negative = up): <span id="cardHoverLiftValue">-8px</span></label>
+            <input type="range" id="cardHoverLift" min="-20" max="0" step="1" value="-8" 
+                   onchange="CSSDesigner.updateStyle('cardHoverLift', this.value)" class="slider">
+        </div>
+    </div>
+
+    <!-- Poster Controls -->
+    <div class="detail-section">
+        <div class="detail-title">🖼️ Poster Settings</div>
+        
+        <div class="form-group">
+            <label for="posterBorderRadius">Poster Border Radius (top): <span id="posterBorderRadiusValue">16px</span></label>
+            <input type="range" id="posterBorderRadius" min="0" max="32" step="1" value="16" 
+                   onchange="CSSDesigner.updateStyle('posterBorderRadius', this.value)" class="slider">
+        </div>
+
+        <div class="form-group">
+            <label for="posterAspectRatio">Poster Aspect Ratio: <span id="posterAspectRatioValue">2/3</span></label>
+            <select id="posterAspectRatio" onchange="CSSDesigner.updateStyle('posterAspectRatio', this.value)">
+                <option value="2/3">2:3 (Standard)</option>
+                <option value="16/9">16:9 (Widescreen)</option>
+                <option value="4/3">4:3 (Classic)</option>
+                <option value="1/1">1:1 (Square)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="posterFit">Poster Fit: <span id="posterFitValue">contain</span></label>
+            <select id="posterFit" onchange="CSSDesigner.updateStyle('posterFit', this.value)">
+                <option value="contain">Contain (Show Full)</option>
+                <option value="cover">Cover (Fill Space)</option>
+            </select>
         </div>
     </div>
 </div>

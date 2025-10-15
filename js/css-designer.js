@@ -1,4 +1,4 @@
-// CineShelf CSS Designer - Live Card Customization
+// CineShelf CSS Designer - Tab-Aware Card Customization
 // Save this as js/css-designer.js
 
 window.CSSDesigner = (function() {
@@ -6,8 +6,6 @@ window.CSSDesigner = (function() {
     const DEFAULT_STYLES = {
         cardBgOpacity: 0.12,
         cardBorderRadius: 16,
-        cardPadding: 0.75,
-        cardGap: 1,
         cardBorderColor: '#ffffff',
         cardBorderOpacity: 0.25,
         cardHoverScale: 1.02,
@@ -15,18 +13,19 @@ window.CSSDesigner = (function() {
         posterBorderRadius: 16,
         posterAspectRatio: '2/3',
         posterFit: 'contain',
-        titleFontSize: 0.95,
-        titleFontWeight: 700,
-        titleLineClamp: 2,
-        infoFontSize: 0.8,
-        infoOpacity: 0.9,
         cardShadowBlur: 25,
         cardShadowOpacity: 0.1,
         cardBlur: 20
     };
 
-    let currentStyles = {...DEFAULT_STYLES};
-    const STORAGE_KEY = 'cineshelf_custom_styles';
+    let currentTab = 'both'; // 'collection', 'wishlist', or 'both'
+    let stylesPerTab = {
+        collection: {...DEFAULT_STYLES},
+        wishlist: {...DEFAULT_STYLES},
+        both: {...DEFAULT_STYLES}
+    };
+
+    const STORAGE_PREFIX = 'cineshelf_custom_styles_';
 
     // Sample movie data for preview
     const previewMovies = [
@@ -54,30 +53,47 @@ window.CSSDesigner = (function() {
     ];
 
     function init() {
-        loadStyles();
+        loadAllStyles();
         createPreviewCards();
         updateAllInputs();
         applyStylesToPage();
         
-        console.log('CineShelf CSS Designer initialized');
+        // Set up tab selector event listener
+        const tabSelector = document.getElementById('cssTabSelector');
+        if (tabSelector) {
+            tabSelector.addEventListener('change', handleTabChange);
+        }
+        
+        console.log('CineShelf CSS Designer initialized (Tab-Aware)');
     }
 
-    function loadStyles() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                currentStyles = {...DEFAULT_STYLES, ...JSON.parse(saved)};
-                console.log('Loaded custom styles:', currentStyles);
-            } catch (error) {
-                console.error('Error loading custom styles:', error);
-                currentStyles = {...DEFAULT_STYLES};
+    function handleTabChange(event) {
+        currentTab = event.target.value;
+        console.log('Designer tab changed to:', currentTab);
+        updateAllInputs();
+        applyStylesToPage();
+    }
+
+    function loadAllStyles() {
+        // Load styles for each tab
+        ['collection', 'wishlist', 'both'].forEach(tab => {
+            const saved = localStorage.getItem(STORAGE_PREFIX + tab);
+            if (saved) {
+                try {
+                    stylesPerTab[tab] = {...DEFAULT_STYLES, ...JSON.parse(saved)};
+                    console.log(`Loaded custom styles for ${tab}:`, stylesPerTab[tab]);
+                } catch (error) {
+                    console.error(`Error loading ${tab} styles:`, error);
+                    stylesPerTab[tab] = {...DEFAULT_STYLES};
+                }
             }
-        }
+        });
     }
 
     function saveStyles() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(currentStyles));
-        console.log('Saved custom styles');
+        const currentStyles = stylesPerTab[currentTab];
+        localStorage.setItem(STORAGE_PREFIX + currentTab, JSON.stringify(currentStyles));
+        console.log(`Saved custom styles for ${currentTab}`);
     }
 
     function updateStyle(property, value) {
@@ -86,7 +102,7 @@ window.CSSDesigner = (function() {
             value = parseFloat(value);
         }
         
-        currentStyles[property] = value;
+        stylesPerTab[currentTab][property] = value;
         saveStyles();
         applyStylesToPage();
         updateValueDisplay(property, value);
@@ -103,10 +119,6 @@ window.CSSDesigner = (function() {
             displayElement.textContent = value + 'px';
         } else if (property.includes('Radius') || property.includes('Blur') || property.includes('Shadow')) {
             displayElement.textContent = value + 'px';
-        } else if (property.includes('Padding') || property.includes('Gap') || property.includes('FontSize')) {
-            displayElement.textContent = value + 'rem';
-        } else if (property.includes('Weight') || property.includes('LineClamp')) {
-            displayElement.textContent = value;
         } else if (property === 'posterAspectRatio') {
             displayElement.textContent = value;
         } else {
@@ -115,7 +127,8 @@ window.CSSDesigner = (function() {
     }
 
     function updateAllInputs() {
-        // Update all input values and displays
+        // Update all input values and displays based on current tab
+        const currentStyles = stylesPerTab[currentTab];
         Object.keys(currentStyles).forEach(property => {
             const input = document.getElementById(property);
             if (input) {
@@ -142,14 +155,43 @@ window.CSSDesigner = (function() {
     }
 
     function generateCSS() {
-        const s = currentStyles;
+        let css = '/* CineShelf Custom Card Styles - Tab-Aware */\n\n';
         
-        // Convert hex color to rgba
+        // Generate CSS for 'both' (applies to all tabs)
+        if (stylesPerTab.both) {
+            css += generateCSSForTab('both', stylesPerTab.both);
+        }
+        
+        // Generate CSS for 'collection' (Movies tab only)
+        if (stylesPerTab.collection) {
+            css += generateCSSForTab('collection', stylesPerTab.collection);
+        }
+        
+        // Generate CSS for 'wishlist' (Wishlist tab only)
+        if (stylesPerTab.wishlist) {
+            css += generateCSSForTab('wishlist', stylesPerTab.wishlist);
+        }
+        
+        return css;
+    }
+
+    function generateCSSForTab(tab, styles) {
+        const s = styles;
         const borderColor = hexToRgba(s.cardBorderColor, s.cardBorderOpacity);
         
+        // Selector based on tab
+        let selector = '';
+        if (tab === 'both') {
+            selector = '.movie-card';
+        } else if (tab === 'collection') {
+            selector = '#collection .movie-card';
+        } else if (tab === 'wishlist') {
+            selector = '#wishlist .movie-card';
+        }
+        
         return `
-        /* CineShelf Custom Card Styles */
-        .movie-card {
+        /* Designer styles for: ${tab} */
+        ${selector} {
             background: rgba(255, 255, 255, ${s.cardBgOpacity}) !important;
             border-radius: ${s.cardBorderRadius}px !important;
             border-color: ${borderColor} !important;
@@ -158,40 +200,14 @@ window.CSSDesigner = (function() {
             box-shadow: 0 8px ${s.cardShadowBlur}px rgba(0, 0, 0, ${s.cardShadowOpacity}) !important;
         }
         
-        .movie-card:hover {
+        ${selector}:hover {
             transform: translateY(${s.cardHoverLift}px) scale(${s.cardHoverScale}) !important;
         }
         
-        .movie-card-content {
-            padding: ${s.cardPadding}rem !important;
-        }
-        
-        .movie-grid {
-            gap: ${s.cardGap}rem !important;
-        }
-        
-        .movie-card .movie-poster {
+        ${selector} .movie-poster {
             border-radius: ${s.posterBorderRadius}px ${s.posterBorderRadius}px 0 0 !important;
             aspect-ratio: ${s.posterAspectRatio} !important;
             object-fit: ${s.posterFit} !important;
-        }
-        
-        .movie-card .movie-title {
-            font-size: ${s.titleFontSize}rem !important;
-            font-weight: ${s.titleFontWeight} !important;
-            -webkit-line-clamp: ${s.titleLineClamp} !important;
-        }
-        
-        .movie-card .movie-info {
-            font-size: ${s.infoFontSize}rem !important;
-            opacity: ${s.infoOpacity} !important;
-        }
-        
-        /* Also apply to preview cards */
-        #cssPreviewGrid .movie-card {
-            background: rgba(255, 255, 255, ${s.cardBgOpacity}) !important;
-            border-radius: ${s.cardBorderRadius}px !important;
-            backdrop-filter: blur(${s.cardBlur}px) !important;
         }
         `;
     }
@@ -234,14 +250,14 @@ window.CSSDesigner = (function() {
     }
 
     function resetStyles() {
-        if (confirm('Reset all card styles to defaults? This cannot be undone.')) {
-            currentStyles = {...DEFAULT_STYLES};
+        if (confirm(`Reset ${currentTab === 'both' ? 'global' : currentTab} card styles to defaults? This cannot be undone.`)) {
+            stylesPerTab[currentTab] = {...DEFAULT_STYLES};
             saveStyles();
             updateAllInputs();
             applyStylesToPage();
             
             if (window.App && window.App.showStatus) {
-                window.App.showStatus('🎨 Card styles reset to defaults!', 'success');
+                window.App.showStatus(`🎨 ${currentTab === 'both' ? 'Global' : currentTab} card styles reset!`, 'success');
             }
         }
     }
