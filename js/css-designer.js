@@ -157,11 +157,6 @@ window.CSSDesigner = (function() {
     function generateCSS() {
         let css = '/* CineShelf Custom Card Styles - Tab-Aware */\n\n';
         
-        // Generate CSS for 'both' (applies to all tabs)
-        if (stylesPerTab.both) {
-            css += generateCSSForTab('both', stylesPerTab.both);
-        }
-        
         // Generate CSS for 'collection' (Movies tab only)
         if (stylesPerTab.collection) {
             css += generateCSSForTab('collection', stylesPerTab.collection);
@@ -170,6 +165,11 @@ window.CSSDesigner = (function() {
         // Generate CSS for 'wishlist' (Wishlist tab only)
         if (stylesPerTab.wishlist) {
             css += generateCSSForTab('wishlist', stylesPerTab.wishlist);
+        }
+        
+        // Generate CSS for 'both' LAST (applies to all tabs - comes last so overrides when equal specificity)
+        if (stylesPerTab.both) {
+            css += generateCSSForTab('both', stylesPerTab.both);
         }
         
         return css;
@@ -182,7 +182,8 @@ window.CSSDesigner = (function() {
         // Selector based on tab
         let selector = '';
         if (tab === 'both') {
-            selector = '.movie-card';
+            // Target BOTH the real tabs AND the preview - same specificity, but comes last so wins
+            selector = '#collection .movie-card, #wishlist .movie-card, .movie-card';
         } else if (tab === 'collection') {
             selector = '#collection .movie-card';
         } else if (tab === 'wishlist') {
