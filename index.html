@@ -597,88 +597,126 @@
         </div>
     </div>
 
-<!-- Design Tab (Admin Only) - CSS Live Designer -->
+<!-- Design Tab (Admin Only) - ULTIMATE CSS Designer -->
 <div id="design" class="tab-content admin-only">
     <div class="detail-section">
-        <div class="detail-title">🎨 Live CSS Designer</div>
-        <p class="detail-text">Adjust card styles in real-time. Changes save automatically.</p>
+        <div class="detail-title">🎨 ULTIMATE CSS Designer</div>
+        <p class="detail-text">Customize every view individually! Changes save automatically per configuration.</p>
         
-        <!-- Tab Selector -->
-        <div class="form-group" style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
-            <label for="cssTabSelector" style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; display: block;">
-                📂 Apply Styles To:
-            </label>
-            <select id="cssTabSelector" style="width: 100%; padding: 0.5rem; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 0.95rem;">
-                <option value="both">🌐 Both Movies & Wishlist (Global)</option>
-                <option value="collection">🎬 Movies Tab Only</option>
-                <option value="wishlist">⭐ Wishlist Tab Only</option>
-            </select>
-            <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 0.5rem; margin-bottom: 0;">
-                💡 Tip: Use "Global" for consistent styling, or customize each tab separately
+        <!-- Selection Controls -->
+        <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid rgba(255,255,255,0.1);">
+            
+            <!-- Tab Selector -->
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label for="cssTabSelector" style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; display: block;">
+                    📂 Apply Styles To:
+                </label>
+                <select id="cssTabSelector" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 0.95rem;">
+                    <option value="both">🌐 Both Movies & Wishlist (Global)</option>
+                    <option value="collection">🎬 Movies Tab Only</option>
+                    <option value="wishlist">⭐ Wishlist Tab Only</option>
+                </select>
+            </div>
+            
+            <!-- View Mode Selector -->
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label for="cssViewModeSelector" style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; display: block;">
+                    👁️ View Mode:
+                </label>
+                <select id="cssViewModeSelector" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 0.95rem;">
+                    <option value="grid">📊 Grid View (with slider)</option>
+                    <option value="list">📝 List View</option>
+                    <option value="detail">📖 Detail View</option>
+                    <option value="small">🔍 Small View</option>
+                </select>
+            </div>
+            
+            <!-- Grid Columns Selector (only visible when Grid View is selected) -->
+            <div class="form-group" id="cssGridColsContainer" style="margin-bottom: 0;">
+                <label for="cssGridColsSelector" style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; display: block;">
+                    📐 Grid Columns:
+                </label>
+                <select id="cssGridColsSelector" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 0.95rem;">
+                    <option value="2">2 Columns</option>
+                    <option value="3">3 Columns</option>
+                    <option value="4" selected>4 Columns</option>
+                    <option value="5">5 Columns</option>
+                    <option value="6">6 Columns</option>
+                    <option value="7">7 Columns</option>
+                    <option value="8">8 Columns</option>
+                </select>
+            </div>
+            
+            <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 1rem; margin-bottom: 0;">
+                💡 <strong>Tip:</strong> Each combination saves independently! Style your 4-column grid differently from your 8-column grid, or make Movies look different from Wishlist.
             </p>
         </div>
         
-        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-            <button onclick="CSSDesigner.resetStyles()" class="btn btn-secondary">🔄 Reset Current Tab</button>
-            <button onclick="CSSDesigner.exportCSS()" class="btn">📥 Export CSS</button>
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <button onclick="CSSDesigner.resetStyles()" class="btn btn-secondary">🔄 Reset Current Config</button>
+            <button onclick="CSSDesigner.exportCSS()" class="btn">📥 Export All CSS</button>
         </div>
     </div>
 
-    <!-- Preview Section -->
+    <!-- Live Preview Section -->
     <div class="detail-section">
         <div class="detail-title">👁️ Live Preview</div>
-        <div id="cssPreviewContainer" style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 12px; min-height: 300px;">
-            <div class="movie-grid grid-cols-3" id="cssPreviewGrid" style="gap: 1rem;">
+        <p class="detail-text" style="font-size: 0.9rem; margin-bottom: 1rem;">
+            Preview updates in real-time as you adjust settings below.
+        </p>
+        <div id="cssPreviewContainer" style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; min-height: 300px; overflow-x: auto;">
+            <div class="movie-grid grid-view grid-cols-4" id="cssPreviewGrid" style="gap: 1rem;">
                 <!-- Preview cards will be generated here -->
             </div>
         </div>
     </div>
 
-    <!-- Grid Card Controls - STYLING ONLY (not layout) -->
+    <!-- Card Appearance Controls -->
     <div class="detail-section">
-        <div class="detail-title">🎨 Card Appearance (Colors, Borders, Effects)</div>
+        <div class="detail-title">🎨 Card Appearance</div>
         <p class="detail-text" style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem;">
-            These controls adjust visual styling only. Layout (fonts, padding, info display) is controlled by the grid slider.
+            These controls adjust visual styling only. Grid slider controls layout (fonts, padding, info visibility).
         </p>
         
         <div class="form-group">
-            <label for="cardBgOpacity">Card Background Opacity: <span id="cardBgOpacityValue">0.12</span></label>
-            <input type="range" id="cardBgOpacity" min="0" max="0.3" step="0.01" value="0.12" 
+            <label for="cardBgOpacity">Background Opacity: <span id="cardBgOpacityValue">0.12</span></label>
+            <input type="range" id="cardBgOpacity" min="0" max="0.5" step="0.01" value="0.12" 
                    onchange="CSSDesigner.updateStyle('cardBgOpacity', this.value)" class="slider">
         </div>
 
         <div class="form-group">
-            <label for="cardBorderRadius">Card Border Radius: <span id="cardBorderRadiusValue">16px</span></label>
+            <label for="cardBorderRadius">Border Radius: <span id="cardBorderRadiusValue">16px</span></label>
             <input type="range" id="cardBorderRadius" min="0" max="32" step="1" value="16" 
                    onchange="CSSDesigner.updateStyle('cardBorderRadius', this.value)" class="slider">
         </div>
 
         <div class="form-group">
-            <label for="cardBorderColor">Card Border Color:</label>
+            <label for="cardBorderColor">Border Color:</label>
             <input type="color" id="cardBorderColor" value="#ffffff" 
-                   onchange="CSSDesigner.updateStyle('cardBorderColor', this.value)">
+                   onchange="CSSDesigner.updateStyle('cardBorderColor', this.value)"
+                   style="width: 100%; height: 50px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); cursor: pointer;">
         </div>
 
         <div class="form-group">
-            <label for="cardBorderOpacity">Card Border Opacity: <span id="cardBorderOpacityValue">0.25</span></label>
+            <label for="cardBorderOpacity">Border Opacity: <span id="cardBorderOpacityValue">0.25</span></label>
             <input type="range" id="cardBorderOpacity" min="0" max="1" step="0.05" value="0.25" 
                    onchange="CSSDesigner.updateStyle('cardBorderOpacity', this.value)" class="slider">
         </div>
 
         <div class="form-group">
-            <label for="cardBlur">Card Backdrop Blur: <span id="cardBlurValue">20px</span></label>
+            <label for="cardBlur">Backdrop Blur: <span id="cardBlurValue">20px</span></label>
             <input type="range" id="cardBlur" min="0" max="40" step="1" value="20" 
                    onchange="CSSDesigner.updateStyle('cardBlur', this.value)" class="slider">
         </div>
 
         <div class="form-group">
-            <label for="cardShadowBlur">Card Shadow Blur: <span id="cardShadowBlurValue">25px</span></label>
+            <label for="cardShadowBlur">Shadow Blur: <span id="cardShadowBlurValue">25px</span></label>
             <input type="range" id="cardShadowBlur" min="0" max="50" step="1" value="25" 
                    onchange="CSSDesigner.updateStyle('cardShadowBlur', this.value)" class="slider">
         </div>
 
         <div class="form-group">
-            <label for="cardShadowOpacity">Card Shadow Opacity: <span id="cardShadowOpacityValue">0.1</span></label>
+            <label for="cardShadowOpacity">Shadow Opacity: <span id="cardShadowOpacityValue">0.1</span></label>
             <input type="range" id="cardShadowOpacity" min="0" max="0.5" step="0.05" value="0.1" 
                    onchange="CSSDesigner.updateStyle('cardShadowOpacity', this.value)" class="slider">
         </div>
@@ -690,18 +728,18 @@
         
         <div class="form-group">
             <label for="cardHoverScale">Hover Scale: <span id="cardHoverScaleValue">1.02</span></label>
-            <input type="range" id="cardHoverScale" min="1" max="1.1" step="0.01" value="1.02" 
+            <input type="range" id="cardHoverScale" min="1" max="1.15" step="0.01" value="1.02" 
                    onchange="CSSDesigner.updateStyle('cardHoverScale', this.value)" class="slider">
         </div>
 
         <div class="form-group">
             <label for="cardHoverLift">Hover Lift (negative = up): <span id="cardHoverLiftValue">-8px</span></label>
-            <input type="range" id="cardHoverLift" min="-20" max="0" step="1" value="-8" 
+            <input type="range" id="cardHoverLift" min="-30" max="0" step="1" value="-8" 
                    onchange="CSSDesigner.updateStyle('cardHoverLift', this.value)" class="slider">
         </div>
     </div>
 
-    <!-- Poster Controls -->
+    <!-- Poster Settings -->
     <div class="detail-section">
         <div class="detail-title">🖼️ Poster Settings</div>
         
@@ -713,21 +751,33 @@
 
         <div class="form-group">
             <label for="posterAspectRatio">Poster Aspect Ratio: <span id="posterAspectRatioValue">2/3</span></label>
-            <select id="posterAspectRatio" onchange="CSSDesigner.updateStyle('posterAspectRatio', this.value)">
-                <option value="2/3">2:3 (Standard)</option>
+            <select id="posterAspectRatio" onchange="CSSDesigner.updateStyle('posterAspectRatio', this.value)"
+                    style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2); font-size: 0.95rem;">
+                <option value="2/3">2:3 (Standard Movie Poster)</option>
                 <option value="16/9">16:9 (Widescreen)</option>
-                <option value="4/3">4:3 (Classic)</option>
+                <option value="4/3">4:3 (Classic TV)</option>
                 <option value="1/1">1:1 (Square)</option>
             </select>
         </div>
 
         <div class="form-group">
             <label for="posterFit">Poster Fit: <span id="posterFitValue">contain</span></label>
-            <select id="posterFit" onchange="CSSDesigner.updateStyle('posterFit', this.value)">
-                <option value="contain">Contain (Show Full)</option>
-                <option value="cover">Cover (Fill Space)</option>
+            <select id="posterFit" onchange="CSSDesigner.updateStyle('posterFit', this.value)"
+                    style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2); font-size: 0.95rem;">
+                <option value="contain">Contain (Show Full Poster)</option>
+                <option value="cover">Cover (Fill Space, May Crop)</option>
             </select>
         </div>
+    </div>
+
+    <!-- Configuration Summary -->
+    <div class="detail-section" style="background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.3);">
+        <div class="detail-title" style="color: #28a745;">💾 Save Info</div>
+        <p class="detail-text" style="font-size: 0.9rem;">
+            <strong>Currently editing:</strong> All changes auto-save to your selected configuration.<br>
+            <strong>Total configs:</strong> 33 separate style combinations (3 tabs × 11 views)<br>
+            <strong>Storage:</strong> Saved to browser localStorage
+        </p>
     </div>
 </div>
 

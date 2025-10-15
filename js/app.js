@@ -1092,7 +1092,7 @@ window.App = (function() {
     }
 
     function displayMovies(type) {
-    const filteredCopies = copies.filter(copy => 
+    const filteredCopies = copies.filter(copy =>
         type === 'collection' ? !copy.isWishlist : copy.isWishlist
     );
 
@@ -1114,32 +1114,33 @@ window.App = (function() {
     }
 
     if (empty) empty.style.display = 'none';
-    
+
     const viewMode = currentView[type] || 'grid';
-    
+
     // Save current grid-cols class
     const currentGridCols = Array.from(grid.classList).find(cls => cls.startsWith('grid-cols-'));
-    
+
     grid.className = 'movie-grid';
-    
-    // Restore grid-cols class if in grid mode
-    if (currentGridCols && viewMode === 'grid') {
-        grid.classList.add(currentGridCols);
-    }
-    
-    if (viewMode === 'detail') {
+
+    // ✅ CRITICAL FIX: Add .grid-view class when in grid mode
+    if (viewMode === 'grid') {
+        grid.classList.add('grid-view');  // ← THIS IS THE FIX!
+        // Restore grid-cols class if it exists
+        if (currentGridCols) {
+            grid.classList.add(currentGridCols);
+        }
+    } else if (viewMode === 'detail') {
         grid.classList.add('detail-view');
     } else if (viewMode === 'list') {
         grid.classList.add('list-view');
     } else if (viewMode === 'small') {
         grid.classList.add('small-view');
     }
-    
+
     // Apply alphabetical filter ONLY if filter exists
     let displayCopies = filteredCopies;
     if (currentFilter && currentFilter[type]) {
         const filterLetter = currentFilter[type].letter;
-        
         if (filterLetter && filterLetter !== 'ALL') {
             displayCopies = filteredCopies.filter(copy => {
                 const firstLetter = copy.title.charAt(0).toUpperCase();
@@ -1150,12 +1151,12 @@ window.App = (function() {
             });
         }
     }
-    
+
     const sortedCopies = sortCopies(displayCopies, currentSort[type]);
-    
+
     // Update filter counter if it exists
     updateFilterCounter(type, displayCopies.length, filteredCopies.length);
-    
+
     grid.innerHTML = '';
 
     sortedCopies.forEach(copy => {
